@@ -1,0 +1,21 @@
+name: Rclone for GoogleDrive
+
+on:
+  push:
+    branches: 
+      - master
+  schedule:
+    - cron: 0 8 * * 4
+
+jobs:
+  rclone:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: rclone
+      uses: wei/rclone@v1
+      env:
+        RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
+      with:
+        args: "sync wuxian:Storage bolan: --drive-acknowledge-abuse"
