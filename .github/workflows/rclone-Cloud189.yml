@@ -28,7 +28,7 @@ jobs:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
         RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
       with:
-        args: "copy wuxian:/Storage/动漫/为美好的世界献上祝福！ /tmp/uploadfiles --copy-links --drive-acknowledge-abuse"
+        args: "copy -P wuxian:/Storage/动漫/为美好的世界献上祝福！ /tmp/uploadfiles --copy-links --drive-acknowledge-abuse"
 
     - name: Clone Cloud189-Cli
       run: git clone https://github.com/Apocalypsor/Cloud189.git
