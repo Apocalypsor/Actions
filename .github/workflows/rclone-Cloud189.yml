@@ -48,4 +48,3 @@ jobs:
         USERNAME: ${{ secrets.CT_USERNAME }}
         PASSWORD: ${{ secrets.CT_PASSWORD }}
       run: python ./Cloud189/189.py upload /tmp/uploadfiles 我的天翼云盘/我的应用/safebox/Anime
-
