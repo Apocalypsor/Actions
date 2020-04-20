@@ -1,0 +1,51 @@
+name: Rclone for Cloud189
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/rclone-Cloud189.yml'
+
+jobs:
+  rclone:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Clean
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo swapoff /swapfile
+        sudo rm -rf /swapfile /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+
+    - name: Download files
+      uses: wei/rclone@v1
+      env:
+        RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
+      with:
+        args: "copy wuxian:/Storage/动漫/为美好的世界献上祝福！ /tmp/uploadfiles --copy-links --drive-acknowledge-abuse"
+
+    - name: Clone Cloud189-Cli
+      run: git clone https://github.com/Apocalypsor/Cloud189.git
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r ./Cloud189/requirements.txt
+
+    - name: Upload files to Cloud189
+      env:
+        USERNAME: ${{ secrets.CT_USERNAME }}
+        PASSWORD: ${{ secrets.CT_PASSWORD }}
+      run: python ./Cloud189/189.py upload /tmp/uploadfiles 我的天翼云盘/我的应用/safebox/Anime
+
