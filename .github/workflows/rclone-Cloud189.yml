@@ -28,7 +28,7 @@ jobs:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
         RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
       with:
-        args: "copy -P wuxian:/Storage/动漫/为美好的世界献上祝福！ ./为美好的世界献上祝福！ --copy-links --drive-acknowledge-abuse"
+        args: "copy -P wuxian:/Storage/电视剧/西部世界/Westworld.S01.1080p.AMZN.WEB-DL.DDP5.1.H264-Ao ./Westword.S01 --copy-links --drive-acknowledge-abuse"
 
     - name: Clone Cloud189-Cli
       run: git clone https://github.com/Apocalypsor/Cloud189.git
@@ -47,4 +47,4 @@ jobs:
       env:
         USERNAME: ${{ secrets.CT_USERNAME }}
         PASSWORD: ${{ secrets.CT_PASSWORD }}
-      run: python ./Cloud189/189.py upload 为美好的世界献上祝福！  我的天翼云盘/我的应用/safebox/Anime
+      run: python ./Cloud189/189.py upload Westword.S01  我的天翼云盘/我的资源/电视剧/西部世界/Westword.S01
