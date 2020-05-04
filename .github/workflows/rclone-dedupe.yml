@@ -1,0 +1,44 @@
+name: Rclone Dedupe
+
+on:
+  schedule:
+    - cron: 0 8 * * 4
+
+jobs:
+  bolan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: rclone dedupe
+      uses: wei/rclone@v1
+      env:
+        RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
+      with:
+        args: "dedupe bolan: --dedupe-mode newest"
+    - name: rclone cleanup
+      uses: wei/rclone@v1
+      env:
+        RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
+      with:
+        args: "cleanup bolan: "
+
+  wuxian:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: rclone dedupe
+      uses: wei/rclone@v1
+      env:
+        RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
+      with:
+        args: "dedupe wuxian:Storage --dedupe-mode newest"
+    - name: rclone cleanup
+      uses: wei/rclone@v1
+      env:
+        RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
+      with:
+        args: "cleanup wuxian: "
