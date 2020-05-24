@@ -13,7 +13,6 @@ jobs:
       uses: wei/rclone@v1
       env:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
-        RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
       with:
         args: "dedupe bolan: --dedupe-mode newest"
     - name: rclone cleanup
@@ -32,7 +31,6 @@ jobs:
       uses: wei/rclone@v1
       env:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
-        RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
       with:
         args: "dedupe wuxian:Storage --dedupe-mode newest"
     - name: rclone cleanup
