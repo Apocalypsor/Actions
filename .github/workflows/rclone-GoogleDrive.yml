@@ -15,6 +15,5 @@ jobs:
       uses: wei/rclone@v1
       env:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
-        RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
       with:
         args: "sync wuxian:Storage bolan: --drive-acknowledge-abuse --drive-server-side-across-configs"
