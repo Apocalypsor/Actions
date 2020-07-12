@@ -3,8 +3,8 @@ name: Rclone for GoogleDrive
 on:
   release:
     types: [published]
-  #schedule:
-  #  - cron: 0 */6 * * *
+  schedule:
+    - cron: 0 */6 * * *
 
 jobs:
   rclone:
@@ -16,4 +16,4 @@ jobs:
       env:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
       with:
-        args: "sync wuxian:Storage bolan: --drive-acknowledge-abuse --drive-server-side-across-configs --tpslimit 3 --transfers 3"
+        args: "sync wuxian:Storage bolan: --drive-acknowledge-abuse --drive-server-side-across-configs"
