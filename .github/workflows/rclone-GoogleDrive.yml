@@ -16,4 +16,4 @@ jobs:
       env:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
       with:
-        args: "sync wuxian:Storage bolan: --drive-acknowledge-abuse --drive-server-side-across-configs"
+        args: "sync wuxian:Storage bolan: --drive-acknowledge-abuse --drive-server-side-across-configs --transfers=40 --checkers=40 --tpslimit=10 --fast-list"
