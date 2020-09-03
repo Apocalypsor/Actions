@@ -1,6 +1,8 @@
 name: Rclone Dedupe
 
 on:
+  workflow_dispatch:
+  
   schedule:
     - cron: 0 */12 * * *
 

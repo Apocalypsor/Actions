@@ -1,0 +1,19 @@
+name: Rclone Sync
+
+on:
+  workflow_dispatch:
+  
+  schedule:
+    - cron: 0 */12 * * *
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: rclone sync
+      uses: wei/rclone@v1
+      env:
+        RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+      with:
+        args: "sync wuxian:Storage bolan: --transfers=32 --checkers=40 --drive-import-formats=docx,xlsx,pptx,svg -v "
