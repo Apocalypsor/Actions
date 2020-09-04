@@ -16,7 +16,7 @@ jobs:
       env:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
       with:
-        args: "dedupe bolan: --dedupe-mode largest -v --fast-list "
+        args: "dedupe bolan: --dedupe-mode largest -v "
     - name: rclone cleanup
       uses: wei/rclone@v1
       env:
@@ -28,7 +28,7 @@ jobs:
       env:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
       with:
-        args: "rmdirs bolan: -v --fast-list "
+        args: "rmdirs bolan: -v "
 
   wuxian:
     runs-on: ubuntu-latest
@@ -39,7 +39,7 @@ jobs:
       env:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
       with:
-        args: "dedupe wuxian:Storage --dedupe-mode largest -v --fast-list "
+        args: "dedupe wuxian:Storage --dedupe-mode largest -v "
     - name: rclone cleanup
       uses: wei/rclone@v1
       env:
@@ -51,4 +51,4 @@ jobs:
       env:
         RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
       with:
-        args: "rmdirs wuxian:Storage -v --fast-list "
+        args: "rmdirs wuxian:Storage -v "
