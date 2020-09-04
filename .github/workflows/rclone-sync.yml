@@ -16,4 +16,4 @@ jobs:
       env:
         RCLONE_CONF: ${{ secrets.SYNC_CONF }}
       with:
-        args: "sync wuxian:Storage bolan: --transfers=24 --checkers=32 --drive-import-formats=docx,xlsx,pptx,svg -v "
+        args: "sync wuxian:Storage bolan: --transfers=24 --checkers=32 --drive-server-side-across-configs -v "
