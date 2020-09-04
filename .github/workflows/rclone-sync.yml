@@ -14,6 +14,6 @@ jobs:
     - name: rclone sync
       uses: wei/rclone@v1
       env:
-        RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        RCLONE_CONF: ${{ secrets.SYNC_CONF }}
       with:
-        args: "sync wuxian:Storage bolan: --transfers=32 --checkers=40 --drive-import-formats=docx,xlsx,pptx,svg -v "
+        args: "sync wuxian:Storage bolan: --transfers=24 --checkers=32 --drive-import-formats=docx,xlsx,pptx,svg -v "
