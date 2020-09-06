@@ -1,4 +1,4 @@
-name: Gitee
+name: Gitee Sync
 
 on:
   workflow_dispatch:
