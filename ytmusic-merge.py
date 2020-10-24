@@ -12,7 +12,7 @@ playlist_songs = ytmusic.get_playlist(playlistId=playlist_id, limit=0)['tracks']
 playlist_songs = [p['videoId'] for p in playlist_songs]
 
 remove_songs, add_songs = [], []
-for p in playlistSongs:
+for p in playlist_songs:
     if p not in songs:
         remove_songs.append(p)
 
@@ -23,11 +23,11 @@ for s in songs:
 if remove_songs:
     print('------------------------------')
     print('Remove Songs:',remove_songs)
-    ytmusic.remove_playlist_items(playlistId=playlistId, videos=remove_songs)
+    ytmusic.remove_playlist_items(playlistId=playlist, videos=remove_songs)
 
 if add_songs:
     print('------------------------------')
     print('Add Songs:', add_songs)
-    ytmusic.add_playlist_items(playlistId=playlistId, videoIds=add_songs)
+    ytmusic.add_playlist_items(playlistId=playlist, videoIds=add_songs)
 
 print('Done!')
