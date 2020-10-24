@@ -6,10 +6,10 @@ playlist_id = os.environ['YT_PLAYLIST']
 ytmusic = YTMusic('auth.json')
 
 songs = ytmusic.get_library_songs(limit=0, validate_responses=True) + ytmusic.get_library_upload_songs(limit=0)
-songs = [songs['videoId'] for songs in songs]
+songs = [s['videoId'] for s in songs]
 
 playlist_songs = ytmusic.get_playlist(playlistId=playlist_id, limit=0)['tracks']
-playlist_songs = [playlist_songs['videoId'] for p in playlist_songs]
+playlist_songs = [p['videoId'] for p in playlist_songs]
 
 remove_songs, add_songs = [], []
 for p in playlistSongs:
