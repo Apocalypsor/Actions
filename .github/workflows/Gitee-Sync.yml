@@ -11,65 +11,62 @@ env:
 
 jobs:
   clash-dashboard:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
-    - name: Github ➡ Gitee
-      id: clash-dashboard-update
-      run: |
-        git clone -b gh-pages https://github.com/Dreamacro/clash-dashboard.git clash-dashboard && cd clash-dashboard
-        git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
-        git remote rm origin && git remote add gitee https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/clash-dashboard.git
-        git push gitee gh-pages -f || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
-    - name: Build Gitee Pages
-      if: steps.clash-dashboard-update.outputs.status != 'updated'
-      uses: yanglbme/gitee-pages-action@master
-      with:
+      - name: Github ➡ Gitee
+        id: clash-dashboard-update
+        run: |
+          git clone -b gh-pages https://github.com/Dreamacro/clash-dashboard.git clash-dashboard && cd clash-dashboard
+          git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
+          git remote rm origin && git remote add gitee https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/clash-dashboard.git
+          git push gitee gh-pages -f || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
+      - name: Build Gitee Pages
+        if: steps.clash-dashboard-update.outputs.status != 'updated'
+        uses: yanglbme/gitee-pages-action@master
+        with:
           gitee-username: $GITEE_USER
           gitee-password: $GITEE_TOKEN
           gitee-repo: $GITEE_USER/clash-dashboard
           branch: gh-pages
 
   yacd:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
-    - name: Github ➡ Gitee
-      id: yacd-update
-      run: |
-        git clone -b gh-pages https://github.com/haishanh/yacd.git yacd && cd yacd
-        git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
-        git remote rm origin && git remote add gitee https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/yacd.git
-        git push gitee gh-pages -f || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
-    - name: Build Gitee Pages
-      if: steps.yacd-update.outputs.status != 'updated'
-      uses: yanglbme/gitee-pages-action@master
-      with:
+      - name: Github ➡ Gitee
+        id: yacd-update
+        run: |
+          git clone -b gh-pages https://github.com/haishanh/yacd.git yacd && cd yacd
+          git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
+          git remote rm origin && git remote add gitee https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/yacd.git
+          git push gitee gh-pages -f || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
+      - name: Build Gitee Pages
+        if: steps.yacd-update.outputs.status != 'updated'
+        uses: yanglbme/gitee-pages-action@master
+        with:
           gitee-username: $GITEE_USER
           gitee-password: $GITEE_TOKEN
           gitee-repo: $GITEE_USER/yacd
           branch: gh-pages
 
   ariang:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
-    - name: Github ➡ Gitee
-      id: ariang-update
-      env:
-        GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-      run: |
-        sudo -E apt-get -qq install unzip
-        wget https://apix.now.sh/github/mayswind/AriaNg/AllInOne -O /tmp/tmp.zip && unzip -n /tmp/tmp.zip -d /tmp/AriaNg
-        sed -i "s/<head>/<head><link rel='shortcut icon' type='image\/x-icon' href='https:\/\/kyun.ltyuanfang.cn\/tc\/2020\/07\/26\/3b9e2cb0075ed.png' \/>/" /tmp/AriaNg/index.html
-        git clone https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/AriaNg.git && mv -f /tmp/AriaNg/index.html AriaNg/
-        git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
-        cd AriaNg && git add . && git commit -am 'Update' && git push https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/AriaNg.git || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
-    - name: Build Gitee Pages
-      if: steps.ariang-update.outputs.status != 'updated'
-      uses: yanglbme/gitee-pages-action@master
-      with:
+      - name: Github ➡ Gitee
+        id: ariang-update
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          sudo -E apt-get -qq install unzip
+          wget https://apix.now.sh/github/mayswind/AriaNg/AllInOne -O /tmp/tmp.zip && unzip -n /tmp/tmp.zip -d /tmp/AriaNg
+          sed -i "s/<head>/<head><link rel='shortcut icon' type='image\/x-icon' href='https:\/\/kyun.ltyuanfang.cn\/tc\/2020\/07\/26\/3b9e2cb0075ed.png' \/>/" /tmp/AriaNg/index.html
+          git clone https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/AriaNg.git && mv -f /tmp/AriaNg/index.html AriaNg/
+          git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
+          cd AriaNg && git add . && git commit -am 'Update' && git push https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/AriaNg.git || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
+      - name: Build Gitee Pages
+        if: steps.ariang-update.outputs.status != 'updated'
+        uses: yanglbme/gitee-pages-action@master
+        with:
           gitee-username: $GITEE_USER
           gitee-password: $GITEE_TOKEN
           gitee-repo: $GITEE_USER/AriaNg
           branch: master
-        
-
-
