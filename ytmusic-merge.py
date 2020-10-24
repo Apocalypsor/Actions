@@ -9,15 +9,15 @@ songs = ytmusic.get_library_songs(limit=0, validate_responses=True) + ytmusic.ge
 songs = [s['videoId'] for s in songs]
 
 playlist_songs = ytmusic.get_playlist(playlistId=playlist_id, limit=0)['tracks']
-playlist_songs = [p['videoId'] for p in playlist_songs]
+playlist_songs_id = [p['videoId'] for p in playlist_songs]
 
 remove_songs, add_songs = [], []
 for p in playlist_songs:
-    if p not in songs:
+    if p['videoId'] not in songs:
         remove_songs.append(p)
 
 for s in songs:
-    if s not in playlist_songs:
+    if s not in playlist_songs_id:
         add_songs.append(s)
 
 if remove_songs:
