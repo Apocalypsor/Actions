@@ -20,7 +20,7 @@ for s in songs:
         add_songs.append(s)
 
 if remove_songs:
-    ytmusic.remove_playlist_items(playlistId=playlistId, videos=removeSongs)
+    ytmusic.remove_playlist_items(playlistId=playlistId, videos=remove_songs)
 
 if add_songs:
-    ytmusic.add_playlist_items(playlistId=playlistId, videoIds=addSongs)
+    ytmusic.add_playlist_items(playlistId=playlistId, videoIds=add_songs)
