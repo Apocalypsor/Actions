@@ -29,9 +29,9 @@ jobs:
         with:
           args: "rmdirs bolan: -v "
 
-    wuxian:
-      runs-on: ubuntu-latest
-      steps:
+  wuxian:
+    runs-on: ubuntu-latest
+    steps:
       - name: rclone dedupe
         uses: wei/rclone@v1
         env:
