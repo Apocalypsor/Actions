@@ -17,17 +17,17 @@ for p in playlist_songs:
         remove_songs.append(p)
 
 for s in songs:
-    if s not in playlistSongs:
+    if s not in playlist_songs:
         add_songs.append(s)
 
 if remove_songs:
     print('------------------------------')
     print('Remove Songs:',remove_songs)
-    ytmusic.remove_playlist_items(playlistId=playlist, videos=remove_songs)
+    ytmusic.remove_playlist_items(playlistId=playlist_id, videos=remove_songs)
 
 if add_songs:
     print('------------------------------')
     print('Add Songs:', add_songs)
-    ytmusic.add_playlist_items(playlistId=playlist, videoIds=add_songs)
+    ytmusic.add_playlist_items(playlistId=playlist_id, videoIds=add_songs)
 
 print('Done!')
