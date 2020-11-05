@@ -21,8 +21,7 @@ jobs:
           git clone -b gh-pages https://github.com/Dreamacro/clash-dashboard.git /tmp/clash-dashboard
           rm -rf /tmp/clash-dashboard/.git/ && mv -f /tmp/clash-dashboard/* . && rm CNAME
           git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
-          git add . && git commit -am 'Update'
-          git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
+          git add . && git commit -am 'Update' && git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
       - name: Build Gitee Pages
         if: steps.clash-dashboard-update.outputs.status != 'updated'
         uses: yanglbme/gitee-pages-action@master
@@ -43,8 +42,7 @@ jobs:
           git clone -b gh-pages https://github.com/haishanh/yacd.git /tmp/yacd
           rm -rf /tmp/yacd/.git/ && mv -f /tmp/yacd/* . && rm CNAME
           git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
-          git add . && git commit -am 'Update'
-          git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
+          git add . && git commit -am 'Update' && git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
       - name: Build Gitee Pages
         if: steps.yacd-update.outputs.status != 'updated'
         uses: yanglbme/gitee-pages-action@master
