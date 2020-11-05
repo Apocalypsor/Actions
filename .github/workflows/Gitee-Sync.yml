@@ -57,7 +57,7 @@ jobs:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
           sudo -E apt-get -qq install unzip
-          wget https://apix.now.sh/github/mayswind/AriaNg/AllInOne -O /tmp/tmp.zip && unzip -n /tmp/tmp.zip -d /tmp/AriaNg
+          curl -sSL https://apix.now.sh/github/mayswind/AriaNg/AllInOne -o /tmp/tmp.zip && unzip -n /tmp/tmp.zip -d /tmp/AriaNg
           sed -i "s/<head>/<head><link rel='shortcut icon' type='image\/x-icon' href='https:\/\/kyun.ltyuanfang.cn\/tc\/2020\/07\/26\/3b9e2cb0075ed.png' \/>/" /tmp/AriaNg/index.html
           git clone https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/AriaNg.git && mv -f /tmp/AriaNg/index.html AriaNg/
           git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
