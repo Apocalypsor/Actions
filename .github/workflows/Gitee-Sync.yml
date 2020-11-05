@@ -17,7 +17,7 @@ jobs:
         id: clash-dashboard-update
         run: |
           git clone https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/clash-dashboard.git
-          cd clash-dashboard && find . -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          cd clash-dashboard && find . -path ./.git -prune -o -exec rm -rf {} \;
           git clone -b gh-pages https://github.com/Dreamacro/clash-dashboard.git /tmp/clash-dashboard
           rm -rf /tmp/clash-dashboard/.git/ && mv -f /tmp/clash-dashboard/* . && rm CNAME
           git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
