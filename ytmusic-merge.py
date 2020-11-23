@@ -7,9 +7,11 @@ limit = sys.maxsize
 
 ytmusic = YTMusic("auth.json")
 
-songs = ytmusic.get_library_songs(
+songs_library = ytmusic.get_library_songs(
     limit=limit, validate_responses=True
-) + ytmusic.get_library_upload_songs(limit=limit)
+)
+songs_local = ytmusic.get_library_upload_songs(limit=limit)
+songs = songs_library + songs_local
 songs = dict((s["videoId"], s["title"]) for s in songs)
 
 playlist_songs = ytmusic.get_playlist(playlistId=playlist_id, limit=0)["tracks"]
@@ -24,7 +26,7 @@ for s in songs:
     if s not in playlist_songs:
         add_songs.append(s)
 
-if remove_songs:
+if remove_songs and songs_library:
     print("------------------------------")
     print("[Remove Songs]")
     remove_title = [playlist_songs[s]["title"] for s in remove_songs]
