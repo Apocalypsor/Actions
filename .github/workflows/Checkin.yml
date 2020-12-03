@@ -1,0 +1,115 @@
+name: Checkin via Action
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: 0 */8 * * *
+
+env:
+  TG_TOKEN: ${{ secrets.TG_TOKEN }}
+  TG_CHATID: ${{ secrets.TG_CHATID }}
+
+jobs:
+  misc:
+    name: Miscellaneous Sites
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: python -m pip install --upgrade requests
+      - name: RRYS Check in
+        env:
+          USERNAME: ${{ secrets.RRYS_USERNAME }}
+          PASSWD: ${{ secrets.RRYS_PASSWD }}
+        run: python Checkin/zimuzuhodong.py || echo "::set-env name=RRYS_FAIL::true" 
+      - name: BYZH Check in
+        env:
+          COOKIE: ${{ secrets.BYZH_COOKIE }}
+        run: python Checkin/buyizhihuo.py || echo "::set-env name=BYZH_FAIL::true"
+      - name: Notify
+        if: env.RRYS_FAIL || env.BYZH_FAIL
+        run: |
+          [ $RRYS_FAIL ] && python Notify.py '人人影视'
+          [ $BYZH_FAIL ] && python Notify.py '不移之火'
+
+  hostloc_get_points:
+    name: Hostloc Get Points
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: |
+          git clone -b master --depth 1 https://github.com/xirikm/hostloc-auto-get-points checkin
+          python -m pip install --upgrade requests pyaes
+      - name: Get points
+        id: hostloc_get_points
+        env:
+          HOSTLOC_USERNAME: ${{ secrets.HOSTLOC_USERNAME }}
+          HOSTLOC_PASSWORD: ${{ secrets.HOSTLOC_PASSWORD }}
+        run: python checkin/hostloc_get_points.py || echo "::set-output name=status::Error"
+      - name: Notify
+        if: steps.hostloc_get_points.outputs.status == 'Error'
+        run: python Notify.py 'Hostloc'
+          
+  tieba_checkin:
+    name: TieBa Check in
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install dependencies
+        run: |
+          git clone -b master --depth 1 https://github.com/ghosx/tieba checkin
+          python -m pip install --upgrade requests
+      - name: Check in
+        id: tieba_checkin
+        env:
+          BDUSS: ${{ secrets.BAIDU_BDUSS }}
+        run: python checkin/main.py || echo "::set-output name=status::Error"
+      - name: Notify
+        if: steps.tieba_checkin.outputs.status == 'Error'
+        run: python Notify.py '贴吧'
+  
+  cloud189:
+    name: Cloud189 Check in
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+    - name: requirements
+      run: |
+        git clone -b master --depth 1 https://github.com/t00t00-crypto/cloud189-action checkin
+        pip3 install -r checkin/requirements.txt
+    - name: Checkin
+      id: cloud189_checkin
+      run: |
+        user='${{ secrets.CLOUD189_USER }}'
+        pwd='${{ secrets.CLOUD189_PWD }}'
+        echo -e "$user\n$pwd" > tmp
+        python3 checkin/checkin.py < tmp || echo "Error"
+  
+  pt_checkin:
+    name: PT Sites Check in
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check in
+      env:
+        URL: ${{ secrets.FLEXGET_CONFIG_URL }}
+      run: |
+        mkdir /tmp/config
+        git clone https://github.com/IvonWei/flexget_qbittorrent_mod.git /tmp/config/plugins
+        curl -L ${{ secrets.FLEXGET_CONFIG_URL }} -o /tmp/config/config.yml
+        docker run -d --name flexget -v /tmp/config:/config madwind/flexget
+        sleep 60 && docker exec flexget flexget execute && docker rm -f flexget

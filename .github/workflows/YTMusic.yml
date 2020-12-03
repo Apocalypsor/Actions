@@ -25,5 +25,5 @@ jobs:
           YT_PLAYLIST: ${{ secrets.YT_PLAYLIST }}
           YT_AUTH: ${{ secrets.YT_AUTH }}
         run: |
-          echo $YT_AUTH > auth.json && python ytmusic-merge.py
+          echo $YT_AUTH > auth.json && python YTMusic-Merge.py
           
