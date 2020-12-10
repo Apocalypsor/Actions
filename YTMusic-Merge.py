@@ -7,9 +7,7 @@ limit = sys.maxsize
 
 ytmusic = YTMusic("auth.json")
 
-songs_library = ytmusic.get_library_songs(
-    limit=limit, validate_responses=True
-)
+songs_library = ytmusic.get_library_songs(limit=limit, validate_responses=True)
 songs_local = ytmusic.get_library_upload_songs(limit=limit)
 songs = songs_library + songs_local
 songs = dict((s["videoId"], s["title"]) for s in songs)
