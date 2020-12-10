@@ -32,11 +32,11 @@ jobs:
         env:
           USERNAME: ${{ secrets.RRYS_USERNAME }}
           PASSWD: ${{ secrets.RRYS_PASSWD }}
-        run: python Checkin/zimuzuhodong.py || echo "::set-env name=RRYS_FAIL::true" 
+        run: python Checkin/zimuzuhodong.py || echo "RRYS_FAIL=true" >> $GITHUB_ENV
       - name: BYZH Check in
         env:
           COOKIE: ${{ secrets.BYZH_COOKIE }}
-        run: python Checkin/buyizhihuo.py || echo "::set-env name=BYZH_FAIL::true"
+        run: python Checkin/buyizhihuo.py || echo "BYZH_FAIL=true" >> $GITHUB_ENV
       - name: Notify
         if: env.RRYS_FAIL || env.BYZH_FAIL
         run: |
