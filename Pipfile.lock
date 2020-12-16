@@ -18,10 +18,10 @@
     "default": {
         "certifi": {
             "hashes": [
-                "sha256:1f422849db327d534e3d0c5f02a263458c3955ec0aae4ff09b95f195c59f4edd",
-                "sha256:f05def092c44fbf25834a51509ef6e631dc19765ab8a57b4e7ab85531f0a9cf4"
+                "sha256:1a4995114262bffbc2413b159f2a1a480c969de6e6eb13ee966d470af86af59c",
+                "sha256:719a74fb9e33b9bd44cc7f3a8d94bc35e4049deebe19ba7d8e108280cfd59830"
             ],
-            "version": "==2020.11.8"
+            "version": "==2020.12.5"
         },
         "chardet": {
             "hashes": [
@@ -53,11 +53,11 @@
         },
         "ytmusicapi": {
             "hashes": [
-                "sha256:a28674a56474c99d31186587c7800165494f7ec39b756960727d3e3e161e3e5f",
-                "sha256:b719a4bbe2d80de8540a3ea30e45ff25d14ff9f1ab7b7871de9e0fcb9cc60adf"
+                "sha256:0f932d637cf73872bbd00344281e9af7398f36658089426f06b3685e136dfbec",
+                "sha256:5ba098a022981eea7c8d2eacec1a9d51d74701a8b68b667cb37cce3010cbd7dc"
             ],
             "index": "pypi",
-            "version": "==0.11.0"
+            "version": "==0.12.0"
         }
     },
     "develop": {}
