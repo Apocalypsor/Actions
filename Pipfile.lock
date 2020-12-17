@@ -25,10 +25,10 @@
         },
         "chardet": {
             "hashes": [
-                "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae",
-                "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
+                "sha256:0d6f53a15db4120f2b08c94f11e7d93d2c911ee118b6b30a04ec3ee8310179fa",
+                "sha256:f864054d66fd9118f2e67044ac8981a54775ec5b67aed0441892edb553d21da5"
             ],
-            "version": "==3.0.4"
+            "version": "==4.0.0"
         },
         "idna": {
             "hashes": [
@@ -39,10 +39,10 @@
         },
         "requests": {
             "hashes": [
-                "sha256:7f1a0b932f4a60a1a65caa4263921bb7d9ee911957e0ae4a23a6dd08185ad5f8",
-                "sha256:e786fa28d8c9154e6a4de5d46a1d921b8749f8b74e28bde23768e5e16eece998"
+                "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804",
+                "sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e"
             ],
-            "version": "==2.25.0"
+            "version": "==2.25.1"
         },
         "urllib3": {
             "hashes": [
@@ -53,11 +53,11 @@
         },
         "ytmusicapi": {
             "hashes": [
-                "sha256:0f932d637cf73872bbd00344281e9af7398f36658089426f06b3685e136dfbec",
-                "sha256:5ba098a022981eea7c8d2eacec1a9d51d74701a8b68b667cb37cce3010cbd7dc"
+                "sha256:e2a5841a69cd3deeb8731eb5148387d20e9dab87b7fd2f7234fd2e4aceb59ced",
+                "sha256:f07e163f99f6ff7266644a4f19d2c1f9212b166185070d23b847f0f3030855b4"
             ],
             "index": "pypi",
-            "version": "==0.12.0"
+            "version": "==0.12.1"
         }
     },
     "develop": {}
