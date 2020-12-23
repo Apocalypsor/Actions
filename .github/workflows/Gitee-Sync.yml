@@ -68,7 +68,7 @@ jobs:
         run: |
           sudo -E apt-get -qq install unzip
           curl -sSL https://apix.now.sh/github/mayswind/AriaNg/AllInOne -o /tmp/tmp.zip && unzip -n /tmp/tmp.zip -d /tmp/AriaNg
-          sed -i "s/<head>/<head><link rel='shortcut icon' type='image\/x-icon' href='https:\/\/kyun.ltyuanfang.cn\/tc\/2020\/07\/26\/3b9e2cb0075ed.png' \/>/" /tmp/AriaNg/index.html
+          sed -i "s/<head>/<head><link rel='shortcut icon' type='image\/x-icon' href='https:\/\/cdn.jsdelivr.net\/gh\/mayswind\/AriaNg@master\/src\/favicon.ico' \/>/" /tmp/AriaNg/index.html
           git clone https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/AriaNg.git && mv -f /tmp/AriaNg/index.html AriaNg/
           git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
           cd AriaNg && git add . && git commit -am 'Update' && git push https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/AriaNg.git || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
