@@ -120,7 +120,7 @@ jobs:
         docker run -d --name flexget -v /tmp/config:/config madwind/flexget
         sleep 60 && docker exec flexget flexget execute && docker rm -f flexget
 
-  run-bilibili-tool:
+  bilibili:
     runs-on: ubuntu-latest
     steps: 
     - name: Set time zone
