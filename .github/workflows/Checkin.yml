@@ -188,8 +188,7 @@ jobs:
       - name: Check in
         id: smzdm_checkin
         run: |
-          cd checkin && node function/smzdm.js 
-      # | grep 'Error|null' || echo "::set-output name=status::Error"
+          cd checkin && node function/smzdm.js | grep 'Error|null' || echo "::set-output name=status::Error"
         env:
           SMZDM_COOKIE: ${{ secrets.SMZDM_COOKIE }}
           SMZDM_USER: ${{ secrets.SMZDM_USER }}
