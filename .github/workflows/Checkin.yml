@@ -102,7 +102,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
-      - name: requirements
+      - name: Install dependencies
         run: |
           git clone -b master --depth 1 https://github.com/t00t00-crypto/cloud189-action checkin
           pip3 install -r checkin/requirements.txt
@@ -167,4 +167,25 @@ jobs:
       - name: Notify
         if: steps.bilibili_checkin.outputs.status == 'Error'
         run: python Notify.py '哔哩哔哩'
+
+  smzdm:
+    runs-on: ubuntu-latest
+    name: SMZDM Check in
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Clone
+        run: git clone https://github.com/jiegto/Actions_smzdm checkin
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - name: Install dependencies
+        run: cd checkin && npm install
+      - name: Check in
+        run: cd checkin && node function/smzdm.js
+        env:
+          SMZDM_COOKIE: ${{ secrets.SMZDM_COOKIE }}
+          SMZDM_USER: ${{ secrets.SMZDM_USER }}
+          SMZDM_PASS: ${{ secrets.SMZDM_PASS }}
 
