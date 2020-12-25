@@ -183,9 +183,14 @@ jobs:
       - name: Install dependencies
         run: cd checkin && npm install
       - name: Check in
-        run: cd checkin && node function/smzdm.js
+        id: smzdm_checkin
+        run: |
+          cd checkin && node function/smzdm.js | grep 'Error|null' || echo "::set-output name=status::Error"
         env:
           SMZDM_COOKIE: ${{ secrets.SMZDM_COOKIE }}
           SMZDM_USER: ${{ secrets.SMZDM_USER }}
           SMZDM_PASS: ${{ secrets.SMZDM_PASS }}
+      - name: Notify
+        if: steps.smzdm_checkin.outputs.status == 'Error'
+        run: python Notify.py '什么值得买'
 
