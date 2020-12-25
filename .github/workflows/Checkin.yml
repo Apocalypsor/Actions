@@ -192,7 +192,8 @@ jobs:
       - name: Check in
         id: smzdm_checkin
         run: |
-          cd checkin && node function/smzdm.js | [[ grep 'Error|null' ]] || echo "::set-output name=status::Sucess"
+          cd checkin && node function/smzdm.js > msg && cat msg
+          [[ $(grep 'Error|null' msg) ]] && echo "::set-output name=status::Error"
         env:
           SMZDM_COOKIE: ${{ secrets.SMZDM_COOKIE }}
           SMZDM_USER: ${{ secrets.SMZDM_USER }}
@@ -203,6 +204,6 @@ jobs:
           python-version: 3.x
       - uses: actions/checkout@v2
       - name: Notify
-        if: steps.smzdm_checkin.outputs.status != 'Sucess'
+        if: steps.smzdm_checkin.outputs.status == 'Error'
         run: python Notify.py '什么值得买'
 
