@@ -193,7 +193,7 @@ jobs:
         id: smzdm_checkin
         run: |
           cd checkin && node function/smzdm.js > msg && cat msg
-          [[ $(grep 'Error|null' msg) ]] && echo "::set-output name=status::Error"
+          [[ $(grep 'Error|null' msg) ]] && echo "::set-output name=status::Error" || true
         env:
           SMZDM_COOKIE: ${{ secrets.SMZDM_COOKIE }}
           SMZDM_USER: ${{ secrets.SMZDM_USER }}
