@@ -182,7 +182,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '12'
+          node-version: '10'
       - name: Install dependencies
         run: cd checkin && npm install
       - name: Check in
