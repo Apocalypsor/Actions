@@ -119,3 +119,35 @@ jobs:
         curl -L ${{ secrets.FLEXGET_CONFIG_URL }} -o /tmp/config/config.yml
         docker run -d --name flexget -v /tmp/config:/config madwind/flexget
         sleep 60 && docker exec flexget flexget execute && docker rm -f flexget
+
+  run-bilibili-tool:
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Set time zone
+      run: sudo timedatectl set-timezone 'Asia/Shanghai'
+    - name: Clone
+      run: git clone https://github.com/RayWangQvQ/BiliBiliTool checkin
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Publish
+      run: |
+        cd checkin
+        dotnet restore
+        dotnet build --configuration Release --no-restore
+        cd ./src/Ray.BiliBiliTool.Console
+        dotnet publish --self-contained false -o ./bin/Publish/net5-dependent
+    - name: Run APP
+      env:
+        Ray_BiliBiliCookie:UserId: ${{secrets.BILI_USERID}}
+        Ray_BiliBiliCookie:SessData: ${{secrets.BILI_SESSDATA}}
+        Ray_BiliBiliCookie:BiliJct: ${{secrets.BILI_BILIJCT}}
+        Ray_Security:IntervalSecondsBetweenRequestApi: 5
+        Ray_DailyTaskConfig:NumberOfCoins: 0
+        Ray_DailyTaskConfig:SupportUpIds: 13046,423895
+      run: |
+        cd checkin
+        cd ./src/Ray.BiliBiliTool.Console/bin/Publish/net5-dependent
+        dotnet Ray.BiliBiliTool.Console.dll -closeConsoleWhenEnd=1 ${{secrets.OTHERCONFIGS}}
+
