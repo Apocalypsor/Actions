@@ -166,6 +166,10 @@ jobs:
           cd checkin
           cd ./src/Ray.BiliBiliTool.Console/bin/Publish/net5-dependent
           dotnet Ray.BiliBiliTool.Console.dll -closeConsoleWhenEnd=1 ${{secrets.OTHERCONFIGS}} || echo "::set-output name=status::Error"
+      - name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
       - uses: actions/checkout@v2
       - name: Notify
         if: steps.bilibili_checkin.outputs.status == 'Error'
@@ -188,13 +192,17 @@ jobs:
       - name: Check in
         id: smzdm_checkin
         run: |
-          cd checkin && node function/smzdm.js | grep 'Error|null' || echo "::set-output name=status::Error"
+          cd checkin && node function/smzdm.js | [[ grep 'Error|null' ]] || echo "::set-output name=status::Sucess"
         env:
           SMZDM_COOKIE: ${{ secrets.SMZDM_COOKIE }}
           SMZDM_USER: ${{ secrets.SMZDM_USER }}
           SMZDM_PASS: ${{ secrets.SMZDM_PASS }}
+      - name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
       - uses: actions/checkout@v2
       - name: Notify
-        if: steps.smzdm_checkin.outputs.status == 'Error'
+        if: steps.smzdm_checkin.outputs.status != 'Sucess'
         run: python Notify.py '什么值得买'
 
