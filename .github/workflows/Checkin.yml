@@ -10,7 +10,7 @@ on:
       - '.github/workflows/Checkin.yml'
 
   schedule:
-    - cron: 0 */8 * * *
+    - cron: 17 */8 * * *
 
 env:
   TG_TOKEN: ${{ secrets.TG_TOKEN }}
@@ -21,6 +21,8 @@ jobs:
     name: Miscellaneous Sites
     runs-on: ubuntu-latest
     steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -47,6 +49,8 @@ jobs:
     name: Hostloc Get Points
     runs-on: ubuntu-latest
     steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
       - name: Set Python
         uses: actions/setup-python@v2
         with:
@@ -69,6 +73,8 @@ jobs:
     name: TieBa Check in
     runs-on: ubuntu-latest
     steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
       - name: Set Python
         uses: actions/setup-python@v2
         with:
@@ -90,65 +96,75 @@ jobs:
     name: Cloud189 Check in
     runs-on: ubuntu-latest
     steps:
-    - name: Set Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x
-    - name: requirements
-      run: |
-        git clone -b master --depth 1 https://github.com/t00t00-crypto/cloud189-action checkin
-        pip3 install -r checkin/requirements.txt
-    - name: Checkin
-      id: cloud189_checkin
-      run: |
-        user='${{ secrets.CLOUD189_USER }}'
-        pwd='${{ secrets.CLOUD189_PWD }}'
-        echo -e "$user\n$pwd" > tmp
-        python3 checkin/checkin.py < tmp || echo "Error"
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: requirements
+        run: |
+          git clone -b master --depth 1 https://github.com/t00t00-crypto/cloud189-action checkin
+          pip3 install -r checkin/requirements.txt
+      - name: Checkin
+        id: cloud189_checkin
+        run: |
+          user='${{ secrets.CLOUD189_USER }}'
+          pwd='${{ secrets.CLOUD189_PWD }}'
+          echo -e "$user\n$pwd" > tmp
+          python3 checkin/checkin.py < tmp || echo "Error"
   
   pt_checkin:
     name: PT Sites Check in
     runs-on: ubuntu-latest
     steps:
-    - name: Check in
-      env:
-        URL: ${{ secrets.FLEXGET_CONFIG_URL }}
-      run: |
-        mkdir /tmp/config
-        git clone https://github.com/IvonWei/flexget_qbittorrent_mod.git /tmp/config/plugins
-        curl -L ${{ secrets.FLEXGET_CONFIG_URL }} -o /tmp/config/config.yml
-        docker run -d --name flexget -v /tmp/config:/config madwind/flexget
-        sleep 60 && docker exec flexget flexget execute && docker rm -f flexget
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Check in
+        env:
+          URL: ${{ secrets.FLEXGET_CONFIG_URL }}
+        run: |
+          mkdir /tmp/config
+          git clone https://github.com/IvonWei/flexget_qbittorrent_mod.git /tmp/config/plugins
+          curl -L ${{ secrets.FLEXGET_CONFIG_URL }} -o /tmp/config/config.yml
+          docker run -d --name flexget -v /tmp/config:/config madwind/flexget
+          sleep 60 && docker exec flexget flexget execute && docker rm -f flexget
 
   bilibili:
     runs-on: ubuntu-latest
     name: BiliBili Check in
     steps: 
-    - name: Set time zone
-      run: sudo timedatectl set-timezone 'Asia/Shanghai'
-    - name: Clone
-      run: git clone https://github.com/RayWangQvQ/BiliBiliTool checkin
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
-    - name: Publish
-      run: |
-        cd checkin
-        dotnet restore
-        dotnet build --configuration Release --no-restore
-        cd ./src/Ray.BiliBiliTool.Console
-        dotnet publish --self-contained false -o ./bin/Publish/net5-dependent
-    - name: Run APP
-      env:
-        Ray_BiliBiliCookie:UserId: ${{secrets.BILI_USERID}}
-        Ray_BiliBiliCookie:SessData: ${{secrets.BILI_SESSDATA}}
-        Ray_BiliBiliCookie:BiliJct: ${{secrets.BILI_BILIJCT}}
-        Ray_Security:IntervalSecondsBetweenRequestApi: 5
-        Ray_DailyTaskConfig:NumberOfCoins: 0
-        Ray_DailyTaskConfig:SupportUpIds: 13046,423895
-      run: |
-        cd checkin
-        cd ./src/Ray.BiliBiliTool.Console/bin/Publish/net5-dependent
-        dotnet Ray.BiliBiliTool.Console.dll -closeConsoleWhenEnd=1 ${{secrets.OTHERCONFIGS}}
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Set time zone
+        run: sudo timedatectl set-timezone 'Asia/Shanghai'
+      - name: Clone
+        run: git clone https://github.com/RayWangQvQ/BiliBiliTool checkin
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Publish
+        run: |
+          cd checkin
+          dotnet restore
+          dotnet build --configuration Release --no-restore
+          cd ./src/Ray.BiliBiliTool.Console
+          dotnet publish --self-contained false -o ./bin/Publish/net5-dependent
+      - name: Run APP
+        id: bilibili_checkin
+        env:
+          Ray_BiliBiliCookie:UserId: ${{secrets.BILI_USERID}}
+          Ray_BiliBiliCookie:SessData: ${{secrets.BILI_SESSDATA}}
+          Ray_BiliBiliCookie:BiliJct: ${{secrets.BILI_BILIJCT}}
+          Ray_Security:IntervalSecondsBetweenRequestApi: 5
+          Ray_DailyTaskConfig:NumberOfCoins: 0
+          Ray_DailyTaskConfig:SupportUpIds: 13046,423895
+        run: |
+          cd checkin
+          cd ./src/Ray.BiliBiliTool.Console/bin/Publish/net5-dependent
+          dotnet Ray.BiliBiliTool.Console.dll -closeConsoleWhenEnd=1 ${{secrets.OTHERCONFIGS}} || echo "::set-output name=status::Error"
+      - name: Notify
+        if: steps.bilibili_checkin.outputs.status == 'Error'
+        run: python Notify.py '哔哩哔哩'
 
