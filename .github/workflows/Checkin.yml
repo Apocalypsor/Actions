@@ -122,6 +122,7 @@ jobs:
 
   bilibili:
     runs-on: ubuntu-latest
+    name: BiliBili Check in
     steps: 
     - name: Set time zone
       run: sudo timedatectl set-timezone 'Asia/Shanghai'
