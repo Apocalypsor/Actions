@@ -65,6 +65,7 @@ jobs:
           HOSTLOC_USERNAME: ${{ secrets.HOSTLOC_USERNAME }}
           HOSTLOC_PASSWORD: ${{ secrets.HOSTLOC_PASSWORD }}
         run: python checkin/hostloc_get_points.py || echo "::set-output name=status::Error"
+      - uses: actions/checkout@v2
       - name: Notify
         if: steps.hostloc_get_points.outputs.status == 'Error'
         run: python Notify.py 'Hostloc'
@@ -88,6 +89,7 @@ jobs:
         env:
           BDUSS: ${{ secrets.BAIDU_BDUSS }}
         run: python checkin/main.py || echo "::set-output name=status::Error"
+      - uses: actions/checkout@v2
       - name: Notify
         if: steps.tieba_checkin.outputs.status == 'Error'
         run: python Notify.py '贴吧'
@@ -164,6 +166,7 @@ jobs:
           cd checkin
           cd ./src/Ray.BiliBiliTool.Console/bin/Publish/net5-dependent
           dotnet Ray.BiliBiliTool.Console.dll -closeConsoleWhenEnd=1 ${{secrets.OTHERCONFIGS}} || echo "::set-output name=status::Error"
+      - uses: actions/checkout@v2
       - name: Notify
         if: steps.bilibili_checkin.outputs.status == 'Error'
         run: python Notify.py '哔哩哔哩'
@@ -185,11 +188,13 @@ jobs:
       - name: Check in
         id: smzdm_checkin
         run: |
-          cd checkin && node function/smzdm.js | grep 'Error|null' || echo "::set-output name=status::Error"
+          cd checkin && node function/smzdm.js 
+      # | grep 'Error|null' || echo "::set-output name=status::Error"
         env:
           SMZDM_COOKIE: ${{ secrets.SMZDM_COOKIE }}
           SMZDM_USER: ${{ secrets.SMZDM_USER }}
           SMZDM_PASS: ${{ secrets.SMZDM_PASS }}
+      - uses: actions/checkout@v2
       - name: Notify
         if: steps.smzdm_checkin.outputs.status == 'Error'
         run: python Notify.py '什么值得买'
