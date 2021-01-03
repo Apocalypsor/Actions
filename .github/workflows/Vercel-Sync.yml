@@ -38,6 +38,9 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
           vercel-project-id: 'prj_wFnUTBQFBXUuqkhISyH9RbpEzhFU'
           working-directory: ./vercel
+      - name: Clean
+        if: steps.rsshub.outputs.status == 'proceed'
+        run: rm -rf vercel
       - name: Push
         if: steps.rsshub.outputs.status == 'proceed'
         uses: stefanzweifel/git-auto-commit-action@v4
