@@ -26,7 +26,7 @@ jobs:
         run: |
           old_commit=$(cat Vercel/RSSHub)
           new_commit=$(curl -s -N https://api.github.com/repos/DIYgod/RSSHub/commits | grep -o '[0-9a-z]\{40\}' | head -n 1 | cut -c1-7)
-          [[ "old_commit" = "new_commit" ]] && echo "Up-to-date!" || echo $new_commit > Vercel/RSSHub && echo "::set-output name=status::proceed"
+          [[ "$old_commit" = "$new_commit" ]] && echo "Up-to-date!" || echo $new_commit > Vercel/RSSHub && echo "::set-output name=status::proceed"
       - name: Update
         if: steps.rsshub.outputs.status == 'proceed'
         run: git clone https://github.com/DIYgod/RSSHub vercel
@@ -63,7 +63,7 @@ jobs:
         run: |
           old_commit=$(cat Vercel/Watermark)
           new_commit=$(curl -s -N https://api.github.com/repos/Apocalypsor/watermark/commits | grep -o '[0-9a-z]\{40\}' | head -n 1 | cut -c1-7)
-          [[ "old_commit" = "new_commit" ]] && echo "Up-to-date!" || echo $new_commit > Vercel/Watermark && echo "::set-output name=status::proceed"
+          [[ "$old_commit" = "$new_commit" ]] && echo "Up-to-date!" || echo $new_commit > Vercel/Watermark && echo "::set-output name=status::proceed"
       - name: Update
         if: steps.watermark.outputs.status == 'proceed'
         run: git clone https://github.com/Apocalypsor/watermark vercel
