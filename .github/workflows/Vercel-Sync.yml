@@ -121,4 +121,40 @@ jobs:
           commit_message: Update Unlock-Music
           skip_dirty_check: false
 
+  sub-web:
+    runs-on: ubuntu-latest
+    name: Sub-Web on Vercel
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.REPO_TOKEN }}
+      - name: Check Upstream
+        id: sub-web
+        run: |
+          curl -s -N https://api.github.com/repos/CareyWang/sub-web/commits | grep -o '[0-9a-z]\{40\}' | head -n 1 | cut -c1-7 > /tmp/new_commit
+          [[ "$(cat Vercel/Sub-Web)" = "$(cat /tmp/new_commit)" ]] && echo "Up-to-date!" || (cat /tmp/new_commit > Vercel/Sub-Web && echo "::set-output name=status::proceed")
+      - name: Update
+        if: steps.sub-web.outputs.status == 'proceed'
+        run: git clone --depth 1 https://github.com/CareyWang/sub-web vercel
+      - name: Vercel Deploy
+        if: steps.sub-web.outputs.status == 'proceed'
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-comment: false
+          vercel-args: '--prod'
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-project-id: 'QmUHZSc97ohH6GrRi42a2UrhtvwtW7tjAm2XUBZhG2AsNJ'
+          working-directory: ./vercel
+      - name: Clean
+        if: steps.sub-web.outputs.status == 'proceed'
+        run: rm -rf vercel
+      - name: Push
+        if: steps.sub-web.outputs.status == 'proceed'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update Sub-Web
+          skip_dirty_check: false
+
 
