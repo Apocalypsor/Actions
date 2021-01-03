@@ -28,7 +28,7 @@ jobs:
           [[ "$(cat Vercel/RSSHub)" = "$(cat /tmp/new_commit)" ]] && echo "Up-to-date!" || (cat /tmp/new_commit > Vercel/RSSHub && echo "::set-output name=status::proceed")
       - name: Update
         if: steps.rsshub.outputs.status == 'proceed'
-        run: git clone https://github.com/DIYgod/RSSHub vercel
+        run: git clone --depth 1 https://github.com/DIYgod/RSSHub vercel
       - name: Vercel Deploy
         if: steps.rsshub.outputs.status == 'proceed'
         uses: amondnet/vercel-action@v20
@@ -64,7 +64,7 @@ jobs:
           [[ "$(cat Vercel/Watermark)" = "$(cat /tmp/new_commit)" ]] && echo "Up-to-date!" || (cat /tmp/new_commit > Vercel/Watermark && echo "::set-output name=status::proceed")
       - name: Update
         if: steps.watermark.outputs.status == 'proceed'
-        run: git clone https://github.com/Apocalypsor/watermark vercel
+        run: git clone --depth 1 https://github.com/Apocalypsor/watermark vercel
       - name: Vercel Deploy
         if: steps.watermark.outputs.status == 'proceed'
         uses: amondnet/vercel-action@v20
@@ -83,6 +83,42 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Update Watermark
+          skip_dirty_check: false
+
+  unlock-music:
+    runs-on: ubuntu-latest
+    name: Unlock-Music on Vercel
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.REPO_TOKEN }}
+      - name: Check Upstream
+        id: unlock-music
+        run: |
+          curl -s -N https://api.github.com/repos/ix64/unlock-music/commits/gh-pages | grep -o '[0-9a-z]\{40\}' | head -n 1 | cut -c1-7 > /tmp/new_commit
+          [[ "$(cat Vercel/Unlock-Music)" = "$(cat /tmp/new_commit)" ]] && echo "Up-to-date!" || (cat /tmp/new_commit > Vercel/Unlock-Music && echo "::set-output name=status::proceed")
+      - name: Update
+        if: steps.unlock-music.outputs.status == 'proceed'
+        run: git clone --depth 1 -b gh-pages https://github.com/ix64/unlock-music vercel
+      - name: Vercel Deploy
+        if: steps.unlock-music.outputs.status == 'proceed'
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-comment: false
+          vercel-args: '--prod'
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-project-id: 'QmRPQNeqTWqzy71XZmp4M1W4Upe6k1fwMMy9hiT5WkP44m'
+          working-directory: ./vercel
+      - name: Clean
+        if: steps.unlock-music.outputs.status == 'proceed'
+        run: rm -rf vercel
+      - name: Push
+        if: steps.unlock-music.outputs.status == 'proceed'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update Unlock-Music
           skip_dirty_check: false
 
 
