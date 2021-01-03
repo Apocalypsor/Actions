@@ -10,11 +10,12 @@ on:
       - '.github/workflows/Vercel-Sync.yml'
 
   schedule:
-    - cron: 0 0 * * *
+    - cron: 0 */6 * * *
 
 jobs:
   rsshub:
     runs-on: ubuntu-latest
+    name: RSSHub on Vercel
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -30,6 +31,7 @@ jobs:
         if: steps.rsshub.outputs.status == 'proceed'
         run: git clone https://github.com/DIYgod/RSSHub vercel
       - name: Vercel Deploy
+        if: steps.rsshub.outputs.status == 'proceed'
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -46,6 +48,43 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Update RSSHub
+          skip_dirty_check: false
+
+  watermark:
+    runs-on: ubuntu-latest
+    name: Watermark on Vercel
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.REPO_TOKEN }}
+      - name: Check Upstream
+        id: watermark
+        run: |
+          old_commit=$(cat Vercel/Watermark)
+          new_commit=$(curl -s -N https://api.github.com/repos/Apocalypsor/watermark/commits | grep -o '[0-9a-z]\{40\}' | head -n 1 | cut -c1-7)
+          [[ "old_commit" = "new_commit" ]] && echo "Up-to-date!" || echo $new_commit > Vercel/Watermark && echo "::set-output name=status::proceed"
+      - name: Update
+        if: steps.watermark.outputs.status == 'proceed'
+        run: git clone https://github.com/Apocalypsor/watermark vercel
+      - name: Vercel Deploy
+        if: steps.watermark.outputs.status == 'proceed'
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-comment: false
+          vercel-args: '--prod'
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-project-id: 'QmdKKBEMcfW8RkmkPg8ThjDfhjg79rf8HLeJFiKbCHw6qd'
+          working-directory: ./vercel
+      - name: Clean
+        if: steps.watermark.outputs.status == 'proceed'
+        run: rm -rf vercel
+      - name: Push
+        if: steps.watermark.outputs.status == 'proceed'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update Watermark
           skip_dirty_check: false
 
 
