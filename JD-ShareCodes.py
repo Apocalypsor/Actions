@@ -11,6 +11,9 @@ pet_api = r"http://api.turinglabs.net/api/v1/jd/pet/create/"
 # 种豆得豆
 plant_bean_api = r"http://api.turinglabs.net/api/v1/jd/bean/create/"
 
+# 京喜工厂
+dream_factory_api = r"http://api.turinglabs.net/api/v1/jd/jxfactory/create/"
+
 # 京东赚赚
 jdzz_api = r"https://code.chiang.fun/api/v1/jd/jdzz/create/"
 
@@ -21,6 +24,7 @@ name = {
     fruit_api: "东东农场",
     pet_api: "东东萌宠",
     plant_bean_api: "种豆得豆",
+    dream_factory_api: "京喜工厂",
     jdzz_api: "京东赚赚",
     jdjoy_api: "疯狂的joy",
 }
@@ -32,6 +36,7 @@ sharecodes = {
         "4npkonnsy7xi3dna3iw4in6t2ixkufx5rmoo5uq",
         "e7lhibzb3zek3gtlvnownonyawhg3fnp5txiq2a",
     ],
+    dream_factory_api: ["Ll_BJZ0ycq8aIipapE1cUw==", "LfF5eSL8m4K8hD1b8MztSw=="],
     jdzz_api: ["S5KkcRxgY8QbQJxn3lv4Cdw", "S5KkcRBkao1zedRr2x_8Pdw"],
     jdjoy_api: ["AfTkMxFWZKDj6vs1Q8SPuqt9zd5YaBeE", "1ldyJmZ3vJwHoXm_caQTq6t9zd5YaBeE"],
 }
