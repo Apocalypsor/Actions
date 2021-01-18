@@ -192,9 +192,9 @@ jobs:
         id: bilibili_checkin
         env:
           Ray_BiliBiliCookie__CookieStr: ${{secrets.BILI_COOKIESTR}}
-          Ray_Security:IntervalSecondsBetweenRequestApi: 5
-          Ray_DailyTaskConfig:NumberOfCoins: 0
-          Ray_DailyTaskConfig:SupportUpIds: 13046,423895
+          Ray_Security__IntervalSecondsBetweenRequestApi: 5
+          Ray_DailyTaskConfig__NumberOfCoins: 0
+          Ray_DailyTaskConfig__SupportUpIds: 13046,423895
         run: |
           cd checkin
           cd ./src/Ray.BiliBiliTool.Console/bin/Publish/net5-dependent
