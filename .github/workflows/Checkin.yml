@@ -191,9 +191,7 @@ jobs:
       - name: Run APP
         id: bilibili_checkin
         env:
-          Ray_BiliBiliCookie:UserId: ${{secrets.BILI_USERID}}
-          Ray_BiliBiliCookie:SessData: ${{secrets.BILI_SESSDATA}}
-          Ray_BiliBiliCookie:BiliJct: ${{secrets.BILI_BILIJCT}}
+          Ray_BiliBiliCookie__CookieStr: ${{secrets.BILI_COOKIESTR}}
           Ray_Security:IntervalSecondsBetweenRequestApi: 5
           Ray_DailyTaskConfig:NumberOfCoins: 0
           Ray_DailyTaskConfig:SupportUpIds: 13046,423895
@@ -210,7 +208,7 @@ jobs:
         if: steps.bilibili_checkin.outputs.status == 'Error'
       - name: Notify
         if: steps.bilibili_checkin.outputs.status == 'Error'
-        run: python Notify.py '哔哩哔哩'
+        run: python -m pip install --upgrade requests && python Notify.py '哔哩哔哩'
 
   smzdm:
     runs-on: ubuntu-latest
@@ -244,5 +242,5 @@ jobs:
         if: steps.smzdm_checkin.outputs.status == 'Error'
       - name: Notify
         if: steps.smzdm_checkin.outputs.status == 'Error'
-        run: python Notify.py '什么值得买'
+        run: python -m pip install --upgrade requests && python Notify.py '什么值得买'
 
