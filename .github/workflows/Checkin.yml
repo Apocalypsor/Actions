@@ -30,19 +30,13 @@ jobs:
           python-version: 3.x
       - name: Install dependencies
         run: python -m pip install --upgrade requests cfscrape
-      - name: RRYS Check in
-        env:
-          USERNAME: ${{ secrets.RRYS_USERNAME }}
-          PASSWD: ${{ secrets.RRYS_PASSWD }}
-        run: python Checkin/zimuzuhodong.py || echo "RRYS_FAIL=true" >> $GITHUB_ENV
       - name: BYZH Check in
         env:
           COOKIE: ${{ secrets.BYZH_COOKIE }}
         run: python Checkin/buyizhihuo.py || echo "BYZH_FAIL=true" >> $GITHUB_ENV
       - name: Notify
-        if: env.RRYS_FAIL || env.BYZH_FAIL
+        if: env.BYZH_FAIL
         run: |
-          [ $RRYS_FAIL ] && python Notify.py '人人影视'
           [ $BYZH_FAIL ] && python Notify.py '不移之火'
 
   hostloc_get_points:
