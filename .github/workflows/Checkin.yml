@@ -10,7 +10,7 @@ on:
       - '.github/workflows/Checkin.yml'
 
   schedule:
-    - cron: 17 */8 * * *
+    - cron: 17 */6 * * *
 
 env:
   TG_TOKEN: ${{ secrets.TG_TOKEN }}
