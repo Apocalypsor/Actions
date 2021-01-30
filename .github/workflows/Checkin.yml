@@ -254,11 +254,24 @@ jobs:
           node-version: '12'
       - name: Install dependencies
         run: cd checkin && npm install
-      - name: Run unicom daily task
+      - name: Run Unicom daily task
+        id: unicom_checkin
         env:
           user: ${{secrets.UNICOM_USER}}
           password: ${{secrets.UNICOM_PASS}}
           appid: ${{secrets.UNICOM_APPID}}
-        run: cd checkin && node index.js unicom --user=${user} --password=${password} --appid=${appid}
+        run: |
+          cd checkin && node index.js unicom --user=${user} --password=${password} --appid=${appid} > msg && cat msg
+          [[ $(grep 'Error' msg) ]] && echo "::set-output name=status::Error" || true
+      - name: Set Python
+        if: steps.unicom_checkin.outputs.status == 'Error'
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - uses: actions/checkout@v2
+        if: steps.unicom_checkin.outputs.status == 'Error'
+      - name: Notify
+        if: steps.unicom_checkin.outputs.status == 'Error'
+        run: python -m pip install --upgrade requests && python Notify.py '联通营业厅'
 
 
