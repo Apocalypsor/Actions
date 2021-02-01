@@ -53,11 +53,11 @@
         },
         "ytmusicapi": {
             "hashes": [
-                "sha256:ba482d2b38794df7639efd46b87c334936b59105a5754a5e0d4c0755b0daba46",
-                "sha256:d8003f2936edc5aa2040a2cfb72cc2729529d5d4344ac048d13367ebfdc8dee7"
+                "sha256:5e6a93d8b9c8404be824c42da3b5a6b6a75bcb02739a8b0f5b5b95c09c0bdaa9",
+                "sha256:ee016a7cffdff549ff2bf25343a76ac33101c28464788fef2a831ee918c5789f"
             ],
             "index": "pypi",
-            "version": "==0.14.0"
+            "version": "==0.14.1"
         }
     },
     "develop": {}
