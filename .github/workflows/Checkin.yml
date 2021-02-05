@@ -189,6 +189,7 @@ jobs:
           Ray_Security__IntervalSecondsBetweenRequestApi: 5
           Ray_DailyTaskConfig__NumberOfCoins: 0
           Ray_DailyTaskConfig__SupportUpIds: 13046,423895
+          Ray_Security__IsSkipDailyTask: ${{secrets.BILI_ISSKIPDAILYTASK}}
         run: |
           cd checkin
           cd ./src/Ray.BiliBiliTool.Console/bin/Publish/net5-dependent
