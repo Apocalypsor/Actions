@@ -190,6 +190,7 @@ jobs:
           Ray_DailyTaskConfig__NumberOfCoins: 0
           Ray_DailyTaskConfig__SupportUpIds: 13046,423895
           Ray_Security__IsSkipDailyTask: ${{secrets.BILI_ISSKIPDAILYTASK}}
+          Ray_Security__UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36"
         run: |
           cd checkin
           cd ./src/Ray.BiliBiliTool.Console/bin/Publish/net5-dependent
