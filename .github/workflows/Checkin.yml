@@ -247,7 +247,7 @@ jobs:
       - name: Sleep Random Time
         run: sleep $(shuf -i 10-60 -n 1)
       - name: Clone
-        run: git clone --depth 1 https://github.com/mixool/HiCnUnicom checkin
+        run: git clone --depth 1 https://github.com/hzys/HiCnUnicom checkin
       - name: Run Unicom daily task
         id: unicom_checkin
         env:
