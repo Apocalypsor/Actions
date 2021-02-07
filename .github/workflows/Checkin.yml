@@ -247,24 +247,14 @@ jobs:
       - name: Sleep Random Time
         run: sleep $(shuf -i 10-60 -n 1)
       - name: Clone
-        run: git clone --depth 1 https://github.com/lunnlew/AutoSignMachine checkin
-      - name: Set time zone
-        run: sudo timedatectl set-timezone 'Asia/Shanghai'
-      - name: Use Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '12'
-      - name: Install dependencies
-        run: cd checkin && npm install
+        run: git clone --depth 1 https://github.com/mixool/HiCnUnicom checkin
       - name: Run Unicom daily task
         id: unicom_checkin
         env:
-          user: ${{secrets.UNICOM_USER}}
-          password: ${{secrets.UNICOM_PASS}}
-          appid: ${{secrets.UNICOM_APPID}}
+          PARAMETER: ${{ secrets.UNICOM_PARAMETER }}
         run: |
-          cd checkin && node index.js unicom --user=${user} --password=${password} --appid=${appid} > msg && cat msg
-          [[ $(grep 'Error' msg) ]] && echo "::set-output name=status::Error" || true
+          cd checkin && bash CnUnicom.sh $PARAMETER > msg && cat msg
+          [[ $(grep 'Failed' msg) ]] && echo "::set-output name=status::Error" || true
       - name: Set Python
         if: steps.unicom_checkin.outputs.status == 'Error'
         uses: actions/setup-python@v2
