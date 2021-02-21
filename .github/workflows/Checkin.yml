@@ -253,7 +253,7 @@ jobs:
         env:
           PARAMETER: ${{ secrets.UNICOM_PARAMETER }}
         run: |
-          cd checkin && bash CnUnicom.sh $PARAMETER > msg && cat msg
+         cd checkin && bash CnUnicom.sh "githubaction $PARAMETER" > msg && cat msg
           [[ $(grep 'Failed' msg) ]] && echo "::set-output name=status::Error" || true
       - name: Set Python
         if: steps.unicom_checkin.outputs.status == 'Error'
