@@ -240,7 +240,7 @@ jobs:
         if: steps.smzdm_checkin.outputs.status == 'Error'
         run: python -m pip install --upgrade requests && python Notify.py '什么值得买'
 
-    unicom:
+  unicom:
     runs-on: ubuntu-latest
     name: UNICOM Check in
     steps:
