@@ -11,10 +11,6 @@ on:
 
   schedule:
     - cron: 0 */6 * * *
-env:
-  GITEE_USER: ${{ secrets.GITEE_USER }}
-  GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-  GITEE_PASSWORD: ${{ secrets.GITEE_PASSWORD }}
 
 jobs:
   clash-dashboard:
@@ -23,9 +19,9 @@ jobs:
       - name: Github ➡ Gitee
         id: clash-dashboard-update
         run: |
-          git clone https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/clash-dashboard.git
+          git clone https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_USER }}/clash-dashboard.git
           cd clash-dashboard && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
-          git clone -b gh-pages https://github.com/Dreamacro/clash-dashboard.git /tmp/clash-dashboard
+          git clone -b gh-pages --depth 1 https://github.com/Dreamacro/clash-dashboard.git /tmp/clash-dashboard
           rm -rf /tmp/clash-dashboard/.git/ && mv -f /tmp/clash-dashboard/* . && rm CNAME
           git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
           git add . && git commit -am 'Update' && git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
@@ -33,9 +29,9 @@ jobs:
         if: steps.clash-dashboard-update.outputs.status != 'updated'
         uses: yanglbme/gitee-pages-action@master
         with:
-          gitee-username: $GITEE_USER
-          gitee-password: $GITEE_PASSWORD
-          gitee-repo: $GITEE_USER/clash-dashboard
+          gitee-username: ${{ secrets.GITEE_USER }}
+          gitee-password: ${{ secrets.GITEE_PASSWORD }}
+          gitee-repo: ${{ secrets.GITEE_USER }}/clash-dashboard
           branch: gh-pages
 
   yacd:
@@ -44,9 +40,9 @@ jobs:
       - name: Github ➡ Gitee
         id: yacd-update
         run: |
-          git clone https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/yacd.git
+          git clone https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_USER }}/yacd.git
           cd yacd && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
-          git clone -b gh-pages https://github.com/haishanh/yacd.git /tmp/yacd
+          git clone -b gh-pages --depth 1 https://github.com/haishanh/yacd.git /tmp/yacd
           rm -rf /tmp/yacd/.git/ && mv -f /tmp/yacd/* . && rm CNAME
           git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
           git add . && git commit -am 'Update' && git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
@@ -54,9 +50,9 @@ jobs:
         if: steps.yacd-update.outputs.status != 'updated'
         uses: yanglbme/gitee-pages-action@master
         with:
-          gitee-username: $GITEE_USER
-          gitee-password: $GITEE_PASSWORD
-          gitee-repo: $GITEE_USER/yacd
+          gitee-username: ${{ secrets.GITEE_USER }}
+          gitee-password: ${{ secrets.GITEE_PASSWORD }}
+          gitee-repo: ${{ secrets.GITEE_USER }}/yacd
           branch: gh-pages
 
   ariang:
@@ -64,20 +60,18 @@ jobs:
     steps:
       - name: Github ➡ Gitee
         id: ariang-update
-        env:
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
           sudo -E apt-get -qq install unzip
           curl -sSL https://apix.now.sh/github/mayswind/AriaNg/AllInOne -o /tmp/tmp.zip && unzip -n /tmp/tmp.zip -d /tmp/AriaNg
           sed -i "s/<head>/<head><link rel='shortcut icon' type='image\/x-icon' href='https:\/\/cdn.jsdelivr.net\/gh\/mayswind\/AriaNg@master\/src\/favicon.ico' \/>/" /tmp/AriaNg/index.html
-          git clone https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/AriaNg.git && mv -f /tmp/AriaNg/index.html AriaNg/
+          git clone https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_USER }}/AriaNg.git && mv -f /tmp/AriaNg/index.html AriaNg/
           git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
-          cd AriaNg && git add . && git commit -am 'Update' && git push https://$GITEE_USER:$GITEE_TOKEN@gitee.com/$GITEE_USER/AriaNg.git || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
+          cd AriaNg && git add . && git commit -am 'Update' && git push https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_USER }}/AriaNg.git || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
       - name: Build Gitee Pages
         if: steps.ariang-update.outputs.status != 'updated'
         uses: yanglbme/gitee-pages-action@master
         with:
-          gitee-username: $GITEE_USER
-          gitee-password: $GITEE_PASSWORD
-          gitee-repo: $GITEE_USER/AriaNg
+          gitee-username: ${{ secrets.GITEE_USER }}
+          gitee-password: ${{ secrets.GITEE_PASSWORD }}
+          gitee-repo: ${{ secrets.GITEE_USER }}/AriaNg
           branch: master
