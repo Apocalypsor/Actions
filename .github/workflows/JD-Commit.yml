@@ -2,11 +2,6 @@ name: JD Commit
 
 on:
   workflow_dispatch:
-    inputs:
-      run:
-        description: 'Run Commit'
-        required: false
-        default: 'skip'
 
   push:
     branches: 
@@ -30,20 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade telethon
-      - name: Verify date
-        id: date
-        run: |
-          dates=(1 8 16 24)
-          for d in ${dates[@]}
-          do
-              if [ $(date -d +1day +%d) -eq $d ]; then
-                  echo 'Start to run.'
-                  echo '::set-output name=status::run'
-                  break
-              fi
-          done
       - name: Commit
-        if: steps.date.outputs.status == 'run' || ${{ github.event.inputs.run }} == 'run'
         env:
           TG_API_ID: ${{ secrets.YT_PLAYLIST }}
           TG_API_HASH: ${{ secrets.YT_AUTH }}
