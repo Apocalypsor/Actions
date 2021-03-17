@@ -2,7 +2,12 @@ name: JD Commit
 
 on:
   workflow_dispatch:
-  
+    inputs:
+      run:
+        description: 'Run Commit'
+        required: false
+        default: 'run'
+
   push:
     branches: 
       - master
@@ -37,7 +42,7 @@ jobs:
               fi
           done
       - name: Commit
-        if: steps.date.outputs.status == 'run' || 
+        if: steps.date.outputs.status == 'run' || ${{ github.event.inputs.run }} == 'run'
         env:
           TG_API_ID: ${{ secrets.YT_PLAYLIST }}
           TG_API_HASH: ${{ secrets.YT_AUTH }}
