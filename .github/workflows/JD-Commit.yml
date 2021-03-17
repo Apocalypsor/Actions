@@ -6,7 +6,7 @@ on:
       run:
         description: 'Run Commit'
         required: false
-        default: 'run'
+        default: 'skip'
 
   push:
     branches: 
