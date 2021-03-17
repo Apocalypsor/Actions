@@ -37,6 +37,7 @@ jobs:
           for d in ${dates[@]}
           do
               if [ $(date -d +1day +%d) -eq $d ]; then
+                  echo 'Start to run.'
                   echo '::set-output name=status::run'
                   break
               fi
