@@ -1,7 +1,7 @@
 from telethon import TelegramClient
 import os
 
-api_id = os.environ["TG_API_ID"].strip().strip("\n")
+api_id = os.environ["TG_API_ID"]
 api_hash = os.environ["TG_API_HASH"]
 
 client = TelegramClient("tg", api_id, api_hash)

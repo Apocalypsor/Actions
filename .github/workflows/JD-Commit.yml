@@ -27,8 +27,8 @@ jobs:
           python -m pip install --upgrade telethon
       - name: Commit
         env:
-          TG_API_ID: ${{ secrets.YT_PLAYLIST }}
-          TG_API_HASH: ${{ secrets.YT_AUTH }}
+          TG_API_ID: ${{ secrets.TG_API_ID }}
+          TG_API_HASH: ${{ secrets.TG_API_HASH }}
           TG_SESSION_PASS: ${{ secrets.TG_SESSION_PASS }}
         run: |
           cd JD && dd if=tg.session.des3 | openssl des3 -d -k $TG_SESSION_PASS | tar zxvf -
