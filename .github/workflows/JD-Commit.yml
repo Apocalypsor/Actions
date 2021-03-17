@@ -33,4 +33,3 @@ jobs:
         run: |
           cd JD && dd if=tg.session.des3 | openssl des3 -d -k $TG_SESSION_PASS | tar zxvf -
           python JD-Commit.py
-          
