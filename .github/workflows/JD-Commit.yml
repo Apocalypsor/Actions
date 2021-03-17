@@ -10,7 +10,7 @@ on:
       - '.github/workflows/JD-Commit.yml'
 
   schedule:
-    - cron: 3 16 7,15,23,28-31 * 
+    - cron: 3 16 7,15,23,28-31 * *
 
 jobs:
   commit:
