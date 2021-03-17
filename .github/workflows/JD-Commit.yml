@@ -1,0 +1,48 @@
+name: JD Commit
+
+on:
+  workflow_dispatch:
+  
+  push:
+    branches: 
+      - master
+    paths:
+      - '.github/workflows/JD-Commit.yml'
+
+  schedule:
+    - cron: 3 16 7,15,23,28-31 * 
+
+jobs:
+  commit:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade telethon
+      - name: Verify date
+        id: date
+        run: |
+          dates=(1 8 16 24)
+          for d in ${dates[@]}
+          do
+              if [ $(date -d +1day +%d) -eq $d ]; then
+                  echo '::set-output name=status::run'
+                  break
+              fi
+          done
+      - name: Commit
+        if: steps.date.outputs.status == 'run' || 
+        env:
+          TG_API_ID: ${{ secrets.YT_PLAYLIST }}
+          TG_API_HASH: ${{ secrets.YT_AUTH }}
+          TG_SESSION_PASS: ${{ secrets.TG_SESSION_PASS }}
+        run: |
+          cd JD && dd if=tg.session.des3 | openssl des3 -d -k $TG_SESSION_PASS | tar zxvf -
+          python JD-Commit.py
+          
