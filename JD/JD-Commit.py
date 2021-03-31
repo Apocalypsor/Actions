@@ -34,13 +34,9 @@ async def TuringLab():
             "77A1D53B422AFAB2B3413E83EFBBF6A8B7D50E6705F2837BCB5FE159947080EE",
             "5249F471E83BFD0101028553F06559B0B7BEC7F80A41145E3D6D7DE1D0B28E33",
         ),
-        "jdglobal": (
-            "dGdLdDVGY1BxNEdFenBscFRENGJjRU10V0NCZTY2ak0ralZpdkRPQWdUOD0=",
-            "Nndjek9NbFpPQzhtYnBTU011V3dzTDVDSFBIUlBybVBqdjJjUElPdUp1dz0=",
-        ),
     }
 
-    sharecodes = {**longterm_sharecodes, **shortterm_sharecodes}
+    sharecodes = {**shortterm_sharecodes, **longterm_sharecodes}
 
     for s in sharecodes:
         msg = "&".join(sharecodes[s])
