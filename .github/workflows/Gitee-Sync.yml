@@ -89,3 +89,20 @@ jobs:
           rm -rf /tmp/jd_docker/.git/ && mv -f /tmp/jd_docker/* .
           git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
           git add . && git commit -am 'Update' && git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
+
+  jd-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Gitee ➡ Github
+        run: |
+          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/${{ github.repository_owner }}/jd-scripts.git jd-scripts
+          cd jd-scripts && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          echo -e ${{ secrets.JD_SSH_KEY }} > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan gitee.com > ~/.ssh/known_hosts
+          git clone --depth 1 git@gitee.com:lxk0301/jd_scripts.git /tmp/jd_scripts
+          rm -rf /tmp/jd_scripts/.git/ && mv -f /tmp/jd_scripts/* .
+          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am 'Update' && git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
