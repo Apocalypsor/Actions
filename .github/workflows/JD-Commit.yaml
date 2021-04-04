@@ -3,12 +3,6 @@ name: JD Commit
 on:
   workflow_dispatch:
 
-  push:
-    branches: 
-      - master
-    paths:
-      - '.github/workflows/JD-Commit.yml'
-
   schedule:
     - cron: 01 16 7,15,23,28-31 * *
 
