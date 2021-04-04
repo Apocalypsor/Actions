@@ -23,6 +23,8 @@ jobs:
           find ./jd -type f -exec sed -i -e 's/https:\/\/gitee\.com\/dockere\/jd-base/https:\/\/github\.com\/dockere\/jd-base/g' {} \;
           find ./jd -type f -exec sed -i -e 's/https:\/\/gitee\.com\/lxk0301\/jd_docker/https:\/\/github\.com\/Apocalypsor\/jd_docker/g' {} \;
           find ./jd -type f -exec sed -i -e 's/git@gitee\.com:lxk0301\/jd_scripts\.git/https:\/\/github\.com\/zero205\/JD/g' {} \;
+          find ./jd -type f -exec sed -i -e 's/https:\/\/registry\.npm\.taobao\.org/https:\/\/registry\.npmjs\.org\//g' {} \;
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Girhub Docker Login
