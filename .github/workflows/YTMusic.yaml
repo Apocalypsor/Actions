@@ -2,12 +2,6 @@ name: Youtube Music
 
 on:
   workflow_dispatch:
-  
-  push:
-    branches: 
-      - master
-    paths:
-      - '.github/workflows/YTMusic.yml'
 
   schedule:
     - cron: 0 */3 * * *

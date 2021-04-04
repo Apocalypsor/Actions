@@ -3,12 +3,6 @@ name: Vercel Sync
 on:
   workflow_dispatch:
 
-  push:
-    branches: 
-      - master
-    paths:
-      - '.github/workflows/Vercel-Sync.yml'
-
   schedule:
     - cron: 0 */6 * * *
 

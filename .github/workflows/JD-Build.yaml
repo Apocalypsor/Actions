@@ -3,12 +3,6 @@ name: JD Build
 on:
   workflow_dispatch:
 
-  push:
-    branches:
-      - master
-    paths:
-      - '.github/workflows/JD-Build.yml'
-
   schedule:
     - cron: 0 */6 * * *
 

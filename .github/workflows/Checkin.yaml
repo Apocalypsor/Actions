@@ -3,12 +3,6 @@ name: Checkin via Action
 on:
   workflow_dispatch:
 
-  push:
-    branches: 
-      - master
-    paths:
-      - '.github/workflows/Checkin.yml'
-
   schedule:
     - cron: 17 */6 * * *
 
