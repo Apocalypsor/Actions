@@ -19,11 +19,7 @@ jobs:
     steps:
       - name: Clone
         run: |
-          git clone --depth 1 --single-branch https://github.com/dockere/jd-base jd
-          find ./jd -type f -exec sed -i -e 's/gitee.com\/dockere\/jd-base/github.com\/dockere\/jd-base/g' {} \;
-          find ./jd -type f -exec sed -i -e 's/gitee.com\/lxk0301\/jd_docker/github.com\/Apocalypsor\/jd_docker/g' {} \;
-          find ./jd -type f -exec sed -i -e 's/git@gitee.com:lxk0301\/jd_scripts.git/https:\/\/github.com\/zero205\/JD/g' {} \;
-          find ./jd -type f -exec sed -i -e 's/registry.npm.taobao.org/registry.npmjs.org/g' {} \;
+          git clone --depth 1 --single-branch https://github.com/DovFork/jd-base jd
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Girhub Docker Login
