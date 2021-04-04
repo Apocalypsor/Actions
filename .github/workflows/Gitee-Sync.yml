@@ -106,3 +106,22 @@ jobs:
           rm -rf /tmp/jd_scripts/.git/ && mv -f /tmp/jd_scripts/* .
           git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
           git add . && git commit -am 'Update' && git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
+
+  jd-base:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Github ➡ Github
+        run: |
+          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-base.git jd-base
+          cd jd-base && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          git clone --depth 1 https://github.com/dockere/jd-base.git /tmp/jd-base
+          rm -rf /tmp/jd-base/.git/
+          find /tmp/jd-base -type f -exec sed -i -e 's/gitee.com\/dockere\/jd-base/github.com\/DovFork\/jd-base/g' {} \;
+          find /tmp/jd-base -type f -exec sed -i -e 's/gitee.com\/lxk0301\/jd_docker/github.com\/DovFork\/jd-docker/g' {} \;
+          find /tmp/jd-base -type f -exec sed -i -e 's/git@gitee.com:lxk0301\/jd_scripts.git/https:\/\/github.com\/DovFork\/jd-scripts/g' {} \;
+          find /tmp/jd-base -type f -exec sed -i -e 's/registry.npm.taobao.org/registry.npmjs.org/g' {} \;
+          mv -f /tmp/jd-base/* .
+          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am 'Update' && git push || (echo 'Everything up-to-date!' && echo "::set-output name=status::updated")
