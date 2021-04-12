@@ -45,14 +45,21 @@ jobs:
           python-version: 3.x
       - name: Install dependencies
         run: |
-          git clone --depth 1 https://github.com/xirikm/hostloc-auto-get-points checkin
-          python -m pip install --upgrade requests pyaes
+          git clone --depth 1 https://github.com/Arronlong/py_scripts checkin
+          python -m pip install -r checkin/requirements.txt
+      - name: Install SeleniumBase
+        run: |
+          cd checkin && python setup.py install
+      - name: Install Chrome and Firefox
+        run: |
+          sudo apt install google-chrome-stable
+          sudo apt-get install firefox
       - name: Get points
         id: hostloc_get_points
         env:
           HOSTLOC_USERNAME: ${{ secrets.HOSTLOC_USERNAME }}
           HOSTLOC_PASSWORD: ${{ secrets.HOSTLOC_PASSWORD }}
-        run: python checkin/hostloc_get_points.py || echo "::set-output name=status::Error"
+        run: python checkin/scripts/hostloc/hostloc_get_points.py || echo "::set-output name=status::Error"
       - uses: actions/checkout@v2
         if: steps.hostloc_get_points.outputs.status == 'Error'
       - name: Notify
