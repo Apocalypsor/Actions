@@ -184,7 +184,7 @@ jobs:
         if: steps.air-conditioner.outputs.status == 'proceed'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: Update Sub-Web
+          commit_message: Update Air-Conditioner
           skip_dirty_check: false
 
 
