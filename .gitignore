@@ -1,0 +1,5 @@
+auth.json
+.DS_Store
+JD/tg.session
+Pipfile
+Pipfile.lock

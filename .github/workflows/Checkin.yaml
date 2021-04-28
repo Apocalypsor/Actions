@@ -1,0 +1,312 @@
+name: Checkin via Action
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: 17 */6 * * *
+
+env:
+  TG_TOKEN: ${{ secrets.TG_TOKEN }}
+  TG_CHATID: ${{ secrets.TG_CHATID }}
+
+jobs:
+  misc:
+    name: Miscellaneous Sites
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: python -m pip install --upgrade requests
+      - name: BYZH Check in
+        env:
+          COOKIE: ${{ secrets.BYZH_COOKIE }}
+        run: python Checkin/buyizhihuo.py || echo "BYZH_FAIL=true" >> $GITHUB_ENV
+      - name: Notify
+        if: env.BYZH_FAIL
+        run: |
+          [ $BYZH_FAIL ] && python Notify.py '不移之火'
+
+  hostloc_get_points:
+    name: Hostloc Get Points
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: |
+          git clone --depth 1 https://github.com/Arronlong/py_scripts checkin
+          python -m pip install -r checkin/requirements.txt
+      - name: Install SeleniumBase
+        run: |
+          cd checkin && python setup.py install
+      - name: Install Chrome and Firefox
+        run: |
+          sudo apt install google-chrome-stable
+          sudo apt-get install firefox
+      - name: Get points
+        id: hostloc_get_points
+        env:
+          HOSTLOC_USERNAME: ${{ secrets.HOSTLOC_USERNAME }}
+          HOSTLOC_PASSWORD: ${{ secrets.HOSTLOC_PASSWORD }}
+        run: python checkin/scripts/hostloc/hostloc_get_points.py || echo "::set-output name=status::Error"
+      - uses: actions/checkout@v2
+        if: steps.hostloc_get_points.outputs.status == 'Error'
+      - name: Notify
+        if: steps.hostloc_get_points.outputs.status == 'Error'
+        run: python Notify.py 'Hostloc'
+          
+  tieba_checkin:
+    name: TieBa Check in
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install dependencies
+        run: |
+          git clone --depth 1 https://github.com/ghosx/tieba checkin
+          python -m pip install --upgrade requests
+      - name: Check in
+        id: tieba_checkin
+        env:
+          BDUSS: ${{ secrets.BAIDU_BDUSS }}
+        run: python checkin/main.py || echo "::set-output name=status::Error"
+      - uses: actions/checkout@v2
+        if: steps.tieba_checkin.outputs.status == 'Error'
+      - name: Notify
+        if: steps.tieba_checkin.outputs.status == 'Error'
+        run: python Notify.py '贴吧'
+  
+  cloud189:
+    name: Cloud189 Check in
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: |
+          git clone --depth 1 https://github.com/mengshouer/CheckinBox checkin
+          pip3 install -r checkin/requirements.txt
+      - name: Checkin
+        id: cloud189_checkin
+        env:
+          username: ${{ secrets.CLOUD189_USER }}
+          password: ${{ secrets.CLOUD189_PW }}
+        run: |
+          python checkin/Cloud189Checkin/C189CheckinForSCF.py > msg && cat msg
+          [[ $(grep '出错' msg) ]] && echo "::set-output name=status::Error" || true
+      - uses: actions/checkout@v2
+        if: steps.cloud189_checkin.outputs.status == 'Error'
+      - name: Notify
+        if: steps.cloud189_checkin.outputs.status == 'Error'
+        run: python Notify.py '天翼云盘'
+
+  pojie:
+    name: 52Pojie Check in
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: |
+          git clone --depth 1 https://github.com/mengshouer/CheckinBox checkin
+          pip3 install -r checkin/requirements.txt
+      - name: Checkin
+        id: pojie_checkin
+        env:
+          cookie_52pj: ${{ secrets.PJ_COOKIE }}
+        run: |
+          python checkin/Checkin52pj/Checkin52pjForSCF.py > msg && cat msg
+          [[ $(grep '失效|出错' msg) ]] && echo "::set-output name=status::Error" || true
+      - uses: actions/checkout@v2
+        if: steps.pojie_checkin.outputs.status == 'Error'
+      - name: Notify
+        if: steps.pojie_checkin.outputs.status == 'Error'
+        run: python Notify.py '吾爱破解'
+  
+  pt_checkin:
+    name: PT Sites Check in
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Check in
+        env:
+          URL: ${{ secrets.FLEXGET_CONFIG_URL }}
+        run: |
+          mkdir /tmp/config
+          git clone --depth 1 https://github.com/IvonWei/flexget_qbittorrent_mod.git /tmp/config/plugins
+          curl -L ${{ secrets.FLEXGET_CONFIG_URL }} -o /tmp/config/config.yml
+          docker run -d --name flexget -v /tmp/config:/config madwind/flexget
+          sleep 60 && docker exec flexget flexget execute && docker rm -f flexget
+
+  bilibili:
+    runs-on: ubuntu-latest
+    name: BiliBili Check in
+    steps: 
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Set time zone
+        run: sudo timedatectl set-timezone 'Asia/Shanghai'
+      - name: Clone
+        run: git clone --depth 1 https://github.com/RayWangQvQ/BiliBiliTool checkin
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Publish
+        run: |
+          cd checkin/src/Ray.BiliBiliTool.Console
+          dotnet publish --configuration Release --self-contained false --output ./bin/Publish/net5-dependent
+      - name: Run APP
+        id: bilibili_checkin
+        env:
+          Ray_BiliBiliCookie__CookieStr: ${{secrets.BILI_COOKIESTR}}
+          Ray_Security__IntervalSecondsBetweenRequestApi: 5
+          Ray_DailyTaskConfig__NumberOfCoins: 0
+          Ray_DailyTaskConfig__SupportUpIds: 13046,423895
+          Ray_Security__IsSkipDailyTask: ${{secrets.BILI_ISSKIPDAILYTASK}}
+          Ray_Security__UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36"
+        run: |
+          cd checkin/src/Ray.BiliBiliTool.Console/bin/Publish/net5-dependent
+          dotnet Ray.BiliBiliTool.Console.dll -runTasks=Daily -closeConsoleWhenEnd=1 ${{secrets.OTHERCONFIGS}} || echo "::set-output name=status::Error"
+      - name: Set Python
+        if: steps.bilibili_checkin.outputs.status == 'Error'
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - uses: actions/checkout@v2
+        if: steps.bilibili_checkin.outputs.status == 'Error'
+      - name: Notify
+        if: steps.bilibili_checkin.outputs.status == 'Error'
+        run: python -m pip install --upgrade requests && python Notify.py '哔哩哔哩'
+
+  smzdm:
+    runs-on: ubuntu-latest
+    name: SMZDM Check in
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Clone
+        run: git clone --depth 1 https://github.com/jiegto/Actions_smzdm checkin
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - name: Install dependencies
+        run: cd checkin && npm install
+      - name: Check in
+        id: smzdm_checkin
+        run: |
+          cd checkin && node function/smzdm.js > msg && cat msg
+          [[ $(grep 'Error|null' msg) ]] && echo "::set-output name=status::Error" || true
+        env:
+          SMZDM_COOKIE: ${{ secrets.SMZDM_COOKIE }}
+          SMZDM_USER: ${{ secrets.SMZDM_USER }}
+          SMZDM_PASS: ${{ secrets.SMZDM_PASS }}
+      - name: Set Python
+        if: steps.smzdm_checkin.outputs.status == 'Error'
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - uses: actions/checkout@v2
+        if: steps.smzdm_checkin.outputs.status == 'Error'
+      - name: Notify
+        if: steps.smzdm_checkin.outputs.status == 'Error'
+        run: python -m pip install --upgrade requests && python Notify.py '什么值得买'
+
+  unicom:
+    runs-on: ubuntu-latest
+    name: UNICOM Check in
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Clone
+        run: git clone --depth 1 https://github.com/srcrs/UnicomTask checkin
+      - name: Install dependencies
+        run: pip install -r checkin/requirements.txt
+      - name: Run Unicom daily task
+        id: unicom_checkin
+        env:
+          USERS_COVER: ${{ secrets.UNICOM_USERS_COVER }}
+        run: cd checkin && echo "$USERS_COVER" > ./config.json && python main.py
+
+  euserv:
+    name: EUserv Extend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Clone
+        run: git clone --depth 1 https://github.com/CokeMine/EUserv_extend checkin
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: python -m pip install --upgrade requests beautifulsoup4
+      - name: EUserv Extend
+        id: euserv_extend
+        env:
+          USERNAME: ${{ secrets.EUSERV_USERNAME }}
+          PASSWORD: ${{ secrets.EUSERV_PASSWORD }}
+        run: |
+          python checkin/main.py > msg && cat msg
+          [[ $(grep '登陆失败' msg) || $(grep 'Error' msg) ]] && echo "::set-output name=status::Error" || true
+      - uses: actions/checkout@v2
+        if: steps.euserv_extend.outputs.status == 'Error'
+      - name: Notify
+        if: steps.euserv_extend.outputs.status == 'Error'
+        run: python Notify.py 'EUserv续期'
+
+  freenom:
+    runs-on: ubuntu-latest
+    name: Freenom Extend
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Clone
+        run: git clone --depth 1 https://github.com/luolongfei/freenom checkin
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+      - name: Setting
+        run: |
+          cd checkin && cp .env.example .env
+          sed -i "s/^FREENOM_USERNAME=.*$/FREENOM_USERNAME='${{ secrets.FREENOM_USERNAME }}'/" .env
+          sed -i "s/^FREENOM_PASSWORD=.*$/FREENOM_PASSWORD='${{ secrets.FREENOM_PASSWORD }}'/" .env
+          sed -i "s/^MAIL_ENABLE=.*$/MAIL_ENABLE=false/" .env
+          sed -i "s/^TELEGRAM_CHAT_ID=.*$/TELEGRAM_CHAT_ID='${{ secrets.TG_CHATID }}'/" .env
+          sed -i "s/^TELEGRAM_BOT_TOKEN=.*$/TELEGRAM_BOT_TOKEN='${{ secrets.TG_TOKEN }}'/" .env
+          sed -i "s/^TELEGRAM_BOT_ENABLE=.*$/TELEGRAM_BOT_ENABLE=true/" .env
+          sed -i "s/^NOTICE_FREQ=.*$/NOTICE_FREQ=0/" .env
+          sed -i "s/^ON_GITHUB_ACTIONS=.*$/ON_GITHUB_ACTIONS=true/" .env
+      - name: Run
+        run: cd checkin && php run

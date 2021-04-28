@@ -1,0 +1,142 @@
+name: Gitee Sync
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: 53 * * * *
+
+jobs:
+  clash-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github ➡ Gitee
+        id: clash-dashboard-update
+        run: |
+          git clone https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_USER }}/clash-dashboard.git
+          cd clash-dashboard && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          git clone -b gh-pages --depth 1 https://github.com/Dreamacro/clash-dashboard.git /tmp/clash-dashboard
+          rm -rf /tmp/clash-dashboard/.git/ && mv -f /tmp/clash-dashboard/* . && rm CNAME
+          git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am "Update" && git push || (echo "Everything up-to-date!" && echo "::set-output name=status::updated")
+      - name: Build Gitee Pages
+        if: steps.clash-dashboard-update.outputs.status != 'updated'
+        uses: yanglbme/gitee-pages-action@master
+        with:
+          gitee-username: ${{ secrets.GITEE_USER }}
+          gitee-password: ${{ secrets.GITEE_PASSWORD }}
+          gitee-repo: ${{ secrets.GITEE_USER }}/clash-dashboard
+          branch: gh-pages
+
+  yacd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github ➡ Gitee
+        id: yacd-update
+        run: |
+          git clone https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_USER }}/yacd.git
+          cd yacd && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          git clone -b gh-pages --depth 1 https://github.com/haishanh/yacd.git /tmp/yacd
+          rm -rf /tmp/yacd/.git/ && mv -f /tmp/yacd/* . && rm CNAME
+          git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am "Update" && git push || (echo "Everything up-to-date!" && echo "::set-output name=status::updated")
+      - name: Build Gitee Pages
+        if: steps.yacd-update.outputs.status != 'updated'
+        uses: yanglbme/gitee-pages-action@master
+        with:
+          gitee-username: ${{ secrets.GITEE_USER }}
+          gitee-password: ${{ secrets.GITEE_PASSWORD }}
+          gitee-repo: ${{ secrets.GITEE_USER }}/yacd
+          branch: gh-pages
+
+  ariang:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github ➡ Gitee
+        id: ariang-update
+        run: |
+          sudo -E apt-get -qq install unzip
+          curl -sSL https://apix.now.sh/github/mayswind/AriaNg/AllInOne -o /tmp/tmp.zip && unzip -n /tmp/tmp.zip -d /tmp/AriaNg
+          sed -i "s/<head>/<head><link rel='shortcut icon' type='image\/x-icon' href='https:\/\/cdn.jsdelivr.net\/gh\/mayswind\/AriaNg@master\/src\/favicon.ico' \/>/" /tmp/AriaNg/index.html
+          git clone https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_USER }}/AriaNg.git && mv -f /tmp/AriaNg/index.html AriaNg/
+          git config --global user.email "bot@gitee.com" && git config --global user.name "Auto Update Bot"
+          cd AriaNg && git add . && git commit -am "Update" && git push https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_USER }}/AriaNg.git || (echo "Everything up-to-date!" && echo "::set-output name=status::updated")
+      - name: Build Gitee Pages
+        if: steps.ariang-update.outputs.status != 'updated'
+        uses: yanglbme/gitee-pages-action@master
+        with:
+          gitee-username: ${{ secrets.GITEE_USER }}
+          gitee-password: ${{ secrets.GITEE_PASSWORD }}
+          gitee-repo: ${{ secrets.GITEE_USER }}/AriaNg
+          branch: master
+
+  # jd-docker:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Sleep Random Time
+  #       run: sleep $(shuf -i 10-60 -n 1)
+  #     - name: Gitee ➡ Github
+  #       run: |
+  #         git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-docker.git jd_docker
+  #         cd jd_docker && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+  #         git clone --depth 1 https://gitee.com/lxk0301/jd_docker.git /tmp/jd_docker
+  #         rm -rf /tmp/jd_docker/.git/ && mv -f /tmp/jd_docker/* .
+  #         git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+  #         git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
+
+  jd-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Gitee ➡ Github
+        run: |
+          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-scripts.git jd-scripts
+          cd jd-scripts && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          mkdir $HOME/.ssh && echo "${{ secrets.JD_SSH_KEY }}" > $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          ssh-keyscan gitee.com > $HOME/.ssh/known_hosts
+          git clone --depth 1 git@gitee.com:lxk0301/jd_scripts.git /tmp/jd_scripts
+          rm -rf /tmp/jd_scripts/.git/ && mv -f /tmp/jd_scripts/* .
+          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
+
+  jd-base:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Github ➡ Github
+        id: jd-base-update
+        run: |
+          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-base.git jd-base
+          cd jd-base && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          git clone --depth 1 https://github.com/dockere/jd-base.git /tmp/jd-base
+          rm -rf /tmp/jd-base/.git/
+          find /tmp/jd-base -type f -exec sed -i -e "s/gitee.com\/dockere\/jd-base/github.com\/DovFork\/jd-base/g" {} \;
+          find /tmp/jd-base -type f -exec sed -i -e "s/gitee.com\/lxk0301\/jd_docker/github.com\/DovFork\/jd-docker/g" {} \;
+          find /tmp/jd-base -type f -exec sed -i -e "s/git@gitee.com:lxk0301\/jd_scripts.git/https:\/\/github.com\/DovFork\/jd-scripts/g" {} \;
+          find /tmp/jd-base -type f -exec sed -i -e "s/registry.npm.taobao.org/registry.npmjs.org/g" {} \;
+          mv -f /tmp/jd-base/* .
+          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am "Update" && git push || (echo "Everything up-to-date!" && echo "::set-output name=status::updated")
+      - name: Set up Docker Buildx
+        if: steps.jd-base-update.outputs.status != 'updated'
+        uses: docker/setup-buildx-action@v1
+      - name: Github Docker Login
+        if: steps.jd-base-update.outputs.status != 'updated'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.REPO_TOKEN }}
+      - name: Build and push
+        if: steps.jd-base-update.outputs.status != 'updated'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./jd-base
+          file: ./jd-base/docker/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/apocalypsor/jd:latest
