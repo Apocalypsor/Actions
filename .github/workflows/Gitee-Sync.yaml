@@ -70,19 +70,19 @@ jobs:
           gitee-repo: ${{ secrets.GITEE_USER }}/AriaNg
           branch: master
 
-  # jd-docker:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Sleep Random Time
-  #       run: sleep $(shuf -i 10-60 -n 1)
-  #     - name: Gitee ➡ Github
-  #       run: |
-  #         git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-docker.git jd_docker
-  #         cd jd_docker && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
-  #         git clone --depth 1 https://gitee.com/lxk0301/jd_docker.git /tmp/jd_docker
-  #         rm -rf /tmp/jd_docker/.git/ && mv -f /tmp/jd_docker/* .
-  #         git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
-  #         git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
+  jd-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Gitee ➡ Github
+        run: |
+          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-docker.git jd_docker
+          cd jd_docker && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          git clone --depth 1 https://github.com/wisz2021/jd_docker.git /tmp/jd_docker
+          rm -rf /tmp/jd_docker/.git/ && mv -f /tmp/jd_docker/* .
+          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
 
   jd-scripts:
     runs-on: ubuntu-latest
