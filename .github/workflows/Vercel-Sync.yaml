@@ -216,5 +216,3 @@ jobs:
         if: steps.air-conditioner-deploy.outputs.preview-url && steps.air-conditioner.outputs.status == 'proceed'
         run:
           python Vercel/update.py $project ${{ env.VER }}
-
-
