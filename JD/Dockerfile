@@ -9,4 +9,4 @@ RUN cd $JD_DIR \
     && git remote set-url origin https://github.com/DovFork/jd-scripts \
     && git fetch \
     && git reset --hard origin/master \
-    && && npm install
+    && npm install
