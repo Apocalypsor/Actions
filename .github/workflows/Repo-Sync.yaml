@@ -1,0 +1,145 @@
+name: Repo Sync
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: 53 * * * *
+
+jobs:
+  ariang:
+    runs-on: ubuntu-latest
+    env:
+      project: Ariang
+      DATABASE: ${{ secrets.DATABASE }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: python -m pip install --upgrade pymongo dnspython
+      - name: Check Upstream
+        id: ariang
+        run: |
+          VER=$(curl -s -N https://api.github.com/repos/mayswind/AriaNg/releases | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | head -n 1)
+          result=$(python Vercel/check.py $project $VER)
+          [[ $result ]] && echo "VER=$VER" >> $GITHUB_ENV || true
+          [[ $result ]] && curl -sSL https://apix.vercel.app/github/mayswind/AriaNg/AriaNg -o /tmp/tmp.zip && unzip -n /tmp/tmp.zip -d ./AriaNg || echo "Download failed!"
+          [[ $result ]] && echo "::set-output name=status::proceed" || echo "Updated!"
+      - name: Github ➡ FTP
+        if: steps.ariang.outputs.status == 'proceed'
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./AriaNg/
+          server-dir: /ariang.dov.moe/
+      - name: Update
+        if: steps.ariang.outputs.status == 'proceed'
+        run: python Vercel/update.py $project ${{ env.VER }}
+
+  jd-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Github ➡ Github
+        run: |
+          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-docker.git jd_docker
+          cd jd_docker && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          git clone --depth 1 https://github.com/wisz2021/jd_docker.git /tmp/jd_docker
+          rm -rf /tmp/jd_docker/.git/ && mv -f /tmp/jd_docker/* .
+          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
+
+  jd-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Gitee ➡ Github
+        run: |
+          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-scripts.git jd-scripts
+          cd jd-scripts && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          mkdir $HOME/.ssh && echo "${{ secrets.JD_SSH_KEY }}" > $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          ssh-keyscan gitee.com > $HOME/.ssh/known_hosts
+          git clone --depth 1 git@gitee.com:lxk0301/jd_scripts.git /tmp/jd_scripts
+          rm -rf /tmp/jd_scripts/.git/ && mv -f /tmp/jd_scripts/* .
+          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
+
+  jd-base:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - uses: actions/checkout@v2
+      - name: Github ➡ Github
+        id: jd-base-update
+        run: |
+          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-base.git jd-base
+          cd jd-base && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          git clone --depth 1 https://github.com/dockere/jd-base.git /tmp/jd-base
+          rm -rf /tmp/jd-base/.git/
+          find /tmp/jd-base -type f -exec sed -i -e "s/gitee.com\/dockere\/jd-base/github.com\/DovFork\/jd-base/g" {} \;
+          find /tmp/jd-base -type f -exec sed -i -e "s/gitee.com\/lxk0301\/jd_docker/github.com\/DovFork\/jd-docker/g" {} \;
+          find /tmp/jd-base -type f -exec sed -i -e "s/git@gitee.com:lxk0301\/jd_scripts.git/https:\/\/github.com\/DovFork\/jd-scripts/g" {} \;
+          find /tmp/jd-base -type f -exec sed -i -e "s/registry.npm.taobao.org/registry.npmjs.org/g" {} \;
+          mv -f /tmp/jd-base/* .
+          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am "Update" && git push || (echo "Everything up-to-date!" && echo "::set-output name=status::updated")
+      - name: Set up Docker Buildx
+        if: steps.jd-base-update.outputs.status != 'updated'
+        uses: docker/setup-buildx-action@v1
+      - name: Github Docker Login
+        if: steps.jd-base-update.outputs.status != 'updated'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.REPO_TOKEN }}
+      - name: Build and push
+        if: steps.jd-base-update.outputs.status != 'updated'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./jd-base
+          file: ./JD/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/apocalypsor/jd:latest
+
+  keep-ccb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Clone
+        run: git clone --depth 1 https://github.com/leeyiding/get_CCB checkin
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: python -m pip install -r checkin/requirements.txt
+      - name: CCB Keep Alive
+        id: ccb_keep
+        env:
+          XSRF_TOKEN: ${{ secrets.CCB_XSRF_TOKEN }}
+          SESSION: ${{ secrets.CCB_SESSION }}
+        run: |
+          cd checkin && mv config.sample.json config.json
+          sed -i "s/\"XSRF-TOKEN\": \".*\"/\"XSRF-TOKEN\": \"$XSRF_TOKEN\"/g" config.json
+          sed -i "s/\"_session\": \".*\"/\"_session\": \"$SESSION\"/g" config.json
+          python keepAlive.py > msg && cat msg
+          [[ $(grep '已失效' msg) ]] && echo "::set-output name=status::Error" || true
+      - uses: actions/checkout@v2
+        if: steps.ccb_keep.outputs.status == 'Error'
+      - name: Notify
+        if: steps.ccb_keep.outputs.status == 'Error'
+        run: python Notify.py '建行签到'
