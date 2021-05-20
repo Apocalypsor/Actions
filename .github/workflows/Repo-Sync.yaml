@@ -116,6 +116,7 @@ jobs:
 
   keep-ccb:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Sleep Random Time
         run: sleep $(shuf -i 10-60 -n 1)

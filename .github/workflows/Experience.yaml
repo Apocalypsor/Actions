@@ -164,6 +164,7 @@ jobs:
 
   smzdm:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     name: SMZDM Experience
     steps:
       - name: Sleep Random Time
