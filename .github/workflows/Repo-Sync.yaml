@@ -71,8 +71,11 @@ jobs:
           git clone --depth 1 git@gitee.com:lxk0301/jd_scripts.git /tmp/jd_scripts
           rm -rf /tmp/jd_scripts/.git/ && mv -f /tmp/jd_scripts/* .
           git clone https://github.com/wuzhi03/MyActions.git /tmp/myActions
-          rm -rf /tmp/myActions/.g* /tmp/myActions/docker README.md
+          rm -rf /tmp/myActions/.g* /tmp/myActions/docker /tmp/myActions/README.md
           mv -n /tmp/myActions/* .
+          git clone https://github.com/nbzongzong/updateTeam.git /tmp/updateTeam
+          rm -rf /tmp/updateTeam/.g* /tmp/updateTeam/shareCodes /tmp/updateTeam/README.md
+          mv -n /tmp/updateTeam/* .
           git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
           git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
 
