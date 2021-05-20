@@ -72,7 +72,7 @@ jobs:
           rm -rf /tmp/jd_scripts/.git/ && mv -f /tmp/jd_scripts/* .
           git clone https://github.com/wuzhi03/MyActions.git /tmp/myActions
           rm -rf /tmp/myActions/.g* /tmp/myActions/docker
-          mv -u /tmp/myActions/docker/* .
+          mv -u /tmp/myActions/* .
           git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
           git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
 
