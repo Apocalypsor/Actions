@@ -162,41 +162,6 @@ jobs:
           docker run -d --name flexget -v /tmp/config:/config madwind/flexget
           sleep 60 && docker exec flexget flexget execute && docker rm -f flexget
 
-  smzdm:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    name: SMZDM Experience
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Clone
-        run: git clone --depth 1 https://github.com/jiegto/Actions_smzdm Experience
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '12'
-      - name: Install dependencies
-        run: cd Experience && npm install
-      - name: Experience
-        id: smzdm_experience
-        run: |
-          cd Experience && node function/smzdm.js > msg && cat msg
-          [[ $(grep 'Error|null' msg) ]] && echo "::set-output name=status::Error" || true
-        env:
-          SMZDM_COOKIE: ${{ secrets.SMZDM_COOKIE }}
-          SMZDM_USER: ${{ secrets.SMZDM_USER }}
-          SMZDM_PASS: ${{ secrets.SMZDM_PASS }}
-      - name: Set Python
-        if: steps.smzdm_experience.outputs.status == 'Error'
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - uses: actions/checkout@v2
-        if: steps.smzdm_experience.outputs.status == 'Error'
-      - name: Notify
-        if: steps.smzdm_experience.outputs.status == 'Error'
-        run: python -m pip install --upgrade requests && python Notify.py '什么值得买'
-
   euserv:
     name: EUserv Extend
     runs-on: ubuntu-latest
