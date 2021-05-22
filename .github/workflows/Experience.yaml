@@ -215,27 +215,3 @@ jobs:
           sed -i "s/^ON_GITHUB_ACTIONS=.*$/ON_GITHUB_ACTIONS=true/" .env
       - name: Run
         run: cd Experience && php run
-
-  ccb:
-    name: CCB Experience
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Clone
-        run: git clone --depth 1 https://github.com/leeyiding/get_CCB Experience
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Install dependencies
-        run: python -m pip install -r Experience/requirements.txt
-      - name: CCB Experience
-        env:
-          XSRF_TOKEN: ${{ secrets.CCB_XSRF_TOKEN }}
-          SESSION: ${{ secrets.CCB_SESSION }}
-        run: |
-          cd Experience && mv config.sample.json config.json
-          sed -i "s/\"XSRF-TOKEN\": \".*\"/\"XSRF-TOKEN\": \"$XSRF_TOKEN\"/g" config.json
-          sed -i "s/\"_session\": \".*\"/\"_session\": \"$SESSION\"/g" config.json
-          python main.py
