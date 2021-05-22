@@ -116,34 +116,3 @@ jobs:
           push: true
           tags: |
             ghcr.io/apocalypsor/jd:latest
-
-  keep-ccb:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Clone
-        run: git clone --depth 1 https://github.com/leeyiding/get_CCB checkin
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Install dependencies
-        run: python -m pip install -r checkin/requirements.txt
-      - name: CCB Keep Alive
-        id: ccb_keep
-        env:
-          XSRF_TOKEN: ${{ secrets.CCB_XSRF_TOKEN }}
-          SESSION: ${{ secrets.CCB_SESSION }}
-        run: |
-          cd checkin && mv config.sample.json config.json
-          sed -i "s/\"XSRF-TOKEN\": \".*\"/\"XSRF-TOKEN\": \"$XSRF_TOKEN\"/g" config.json
-          sed -i "s/\"_session\": \".*\"/\"_session\": \"$SESSION\"/g" config.json
-          python keepAlive.py > msg && cat msg
-          [[ $(grep '已失效' msg) ]] && echo "::set-output name=status::Error" || true
-      - uses: actions/checkout@v2
-        if: steps.ccb_keep.outputs.status == 'Error'
-      - name: Notify
-        if: steps.ccb_keep.outputs.status == 'Error'
-        run: python Notify.py '建行签到'
