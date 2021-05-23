@@ -116,3 +116,40 @@ jobs:
           push: true
           tags: |
             ghcr.io/apocalypsor/jd:latest
+
+  microsoft-365-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - uses: actions/checkout@v2
+      - name: Github ➡ Github
+        id: microsoft-365-admin-update
+        run: |
+          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Microsoft-365-Admin.git Microsoft-365-Admin
+          cd Microsoft-365-Admin && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+          git clone -b dev --depth 1 https://github.com/6mb/Microsoft-365-Admin /tmp/Microsoft-365-Admin
+          rm -rf /tmp/Microsoft-365-Admin/.git/
+          mv -f /tmp/Microsoft-365-Admin/* .
+          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
+          git add . && git commit -am "Update" && git push || (echo "Everything up-to-date!" && echo "::set-output name=status::updated")
+      - name: Set up Docker Buildx
+        if: steps.microsoft-365-admin-update.outputs.status != 'updated'
+        uses: docker/setup-buildx-action@v1
+      - name: Github Docker Login
+        if: steps.jd-base-update.outputs.status != 'updated'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.REPO_TOKEN }}
+      - name: Build and push
+        if: steps.microsoft-365-admin-update.outputs.status != 'updated'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./Microsoft-365-Admin
+          file: ./Microsoft-365-Admin/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/apocalypsor/microsoft-365-admin:latest
