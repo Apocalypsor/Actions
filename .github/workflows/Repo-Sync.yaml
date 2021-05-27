@@ -128,7 +128,7 @@ jobs:
         run: |
           git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Microsoft-365-Admin.git Microsoft-365-Admin
           cd Microsoft-365-Admin && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
-          git clone -b dev --depth 1 https://github.com/6mb/Microsoft-365-Admin /tmp/Microsoft-365-Admin
+          git clone --depth 1 https://github.com/6mb/Microsoft-365-Admin /tmp/Microsoft-365-Admin
           rm -rf /tmp/Microsoft-365-Admin/.git/
           mv -f /tmp/Microsoft-365-Admin/* .
           git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
