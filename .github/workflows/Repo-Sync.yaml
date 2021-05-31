@@ -70,9 +70,8 @@ jobs:
           ssh-keyscan gitee.com > $HOME/.ssh/known_hosts
           git clone --depth 1 git@gitee.com:lxk0301/jd_scripts.git /tmp/jd_scripts
           rm -rf /tmp/jd_scripts/.git/ && mv -f /tmp/jd_scripts/* .
-          git clone --depth 1 https://github.com/ElsaKing/DogDog.git /tmp/DogDog && mv -f /tmp/DogDog/jd* .
           git clone --depth 1 https://github.com/wuzhi03/MyActions.git /tmp/myActions
-          rm -rf /tmp/myActions/.g* /tmp/myActions/docker && mv -u /tmp/myActions/* .
+          rm -rf /tmp/myActions/.g* /tmp/myActions/docker && mv -f /tmp/myActions/* .
           git clone https://github.com/Apocalypsor/Actions /tmp/Actions && mv /tmp/Actions/JD/*.js . || true
           rm README.md
           git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
