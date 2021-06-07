@@ -146,24 +146,24 @@ jobs:
         if: steps.pojie_experience.outputs.status == 'Error'
         run: python Notify.py '吾爱破解'
   
-  pt_experience:
-    name: PT Sites Experience
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Experience
-        env:
-          URL: ${{ secrets.FLEXGET_CONFIG_URL }}
-        run: |
-          mkdir /tmp/config
-          git clone --depth 1 https://github.com/IvonWei/flexget_qbittorrent_mod.git /tmp/config/plugins
-          cd /tmp/config/plugins && git fetch --tags
-          latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
-          git checkout $latestTag
-          curl -L ${{ secrets.FLEXGET_CONFIG_URL }} -o /tmp/config/config.yml
-          docker run -d --name flexget -v /tmp/config:/config madwind/flexget
-          sleep 60 && docker exec flexget flexget execute && docker rm -f flexget
+#   pt_experience:
+#     name: PT Sites Experience
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Sleep Random Time
+#         run: sleep $(shuf -i 10-60 -n 1)
+#       - name: Experience
+#         env:
+#           URL: ${{ secrets.FLEXGET_CONFIG_URL }}
+#         run: |
+#           mkdir /tmp/config
+#           git clone --depth 1 https://github.com/IvonWei/flexget_qbittorrent_mod.git /tmp/config/plugins
+#           cd /tmp/config/plugins && git fetch --tags
+#           latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
+#           git checkout $latestTag
+#           curl -L ${{ secrets.FLEXGET_CONFIG_URL }} -o /tmp/config/config.yml
+#           docker run -d --name flexget -v /tmp/config:/config madwind/flexget
+#           sleep 60 && docker exec flexget flexget execute && docker rm -f flexget
 
   euserv:
     name: EUserv Extend
