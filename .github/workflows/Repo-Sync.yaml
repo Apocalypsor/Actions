@@ -65,7 +65,10 @@ jobs:
         run: |
           git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-scripts.git jd-scripts
           cd jd-scripts && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
-          git clone --depth 1 https://github.com/chinnkarahoi/jd_scripts.git /tmp/jd_scripts
+          mkdir $HOME/.ssh && echo "${{ secrets.JD_SSH_KEY }}" > $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          ssh-keyscan gitee.com > $HOME/.ssh/known_hosts
+          git clone --depth 1 git@gitee.com:lxk0301/jd_scripts.git /tmp/jd_scripts
           rm -rf /tmp/jd_scripts/.git/
           find /tmp/jd_scripts/ -type f -exec sed -i "s/https:\/\/cdn\.jsdelivr\.net\/gh\/\([^@]*\)@\([^\/]*\)\//https:\/\/raw\.githubusercontent\.com\/\1\/\2\//g" {} \;
           mv -f /tmp/jd_scripts/* .
