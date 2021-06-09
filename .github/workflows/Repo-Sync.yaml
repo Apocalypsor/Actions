@@ -72,10 +72,6 @@ jobs:
           rm -rf /tmp/jd_scripts/.git/
           find /tmp/jd_scripts/ -type f -exec sed -i "s/https:\/\/cdn\.jsdelivr\.net\/gh\/\([^@]*\)@\([^\/]*\)\//https:\/\/raw\.githubusercontent\.com\/\1\/\2\//g" {} \;
           mv -f /tmp/jd_scripts/* .
-          git clone --depth 1 https://github.com/wuzhi03/MyActions.git /tmp/myActions
-          rm -rf /tmp/myActions/.g* /tmp/myActions/docker
-          find /tmp/myActions/ -type f -exec sed -i "s/https:\/\/cdn\.jsdelivr\.net\/gh\/\([^@]*\)@\([^\/]*\)\//https:\/\/raw\.githubusercontent\.com\/\1\/\2\//g" {} \;
-          mv -f /tmp/myActions/* .
           git clone https://github.com/Apocalypsor/Actions /tmp/Actions
           find /tmp/Actions/ -type f -exec sed -i "s/https:\/\/cdn\.jsdelivr\.net\/gh\/\([^@]*\)@\([^\/]*\)\//https:\/\/raw\.githubusercontent\.com\/\1\/\2\//g" {} \;
           mv /tmp/Actions/JD/*.js . || true
