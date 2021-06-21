@@ -2,6 +2,12 @@ name: Repo Sync
 
 on:
   workflow_dispatch:
+  
+  push:
+    branches:    
+      - 'master'
+    paths:
+      - '.github/workflows/Repo-Sync.yaml'
 
   schedule:
     - cron: 53 * * * *
@@ -42,81 +48,6 @@ jobs:
         if: steps.ariang.outputs.status == 'proceed'
         run: python Vercel/update.py $project ${{ env.VER }}
 
-#   jd-docker:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Sleep Random Time
-#         run: sleep $(shuf -i 10-60 -n 1)
-#       - name: Github ➡ Github
-#         run: |
-#           git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-docker.git jd_docker
-#           cd jd_docker && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
-#           git clone --depth 1 https://github.com/wisz2021/jd_docker.git /tmp/jd_docker
-#           rm -rf /tmp/jd_docker/.git/ && mv -f /tmp/jd_docker/* .
-#           git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
-#           git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
-
-  jd-scripts:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Gitee ➡ Github
-        run: |
-          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-scripts.git jd-scripts
-          cd jd-scripts && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
-          git clone --depth 1 https://github.com/chinnkarahoi/jd_scripts.git /tmp/jd_scripts
-          rm -rf /tmp/jd_scripts/.git/
-          find /tmp/jd_scripts/ -type f -exec sed -i "s/https:\/\/cdn\.jsdelivr\.net\/gh\/\([^@]*\)@\([^\/]*\)\//https:\/\/raw\.githubusercontent\.com\/\1\/\2\//g" {} \;
-          mv -f /tmp/jd_scripts/* .
-          git clone https://github.com/Apocalypsor/Actions /tmp/Actions
-          find /tmp/Actions/ -type f -exec sed -i "s/https:\/\/cdn\.jsdelivr\.net\/gh\/\([^@]*\)@\([^\/]*\)\//https:\/\/raw\.githubusercontent\.com\/\1\/\2\//g" {} \;
-          mv /tmp/Actions/JD/*.js . || true
-          rm README.md
-          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
-          git add . && git commit -am "Update" && git push || echo "Everything up-to-date!"
-
-  # jd-base:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Sleep Random Time
-  #       run: sleep $(shuf -i 10-60 -n 1)
-  #     - uses: actions/checkout@v2
-  #     - name: Github ➡ Github
-  #       id: jd-base-update
-  #       run: |
-  #         git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-base.git jd-base
-  #         cd jd-base && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
-  #         git clone --depth 1 https://github.com/dockere/jd-base.git /tmp/jd-base
-  #         rm -rf /tmp/jd-base/.git/
-  #         find /tmp/jd-base -type f -exec sed -i -e "s/gitee.com\/dockere\/jd-base/github.com\/DovFork\/jd-base/g" {} \;
-  #         find /tmp/jd-base -type f -exec sed -i -e "s/gitee.com\/lxk0301\/jd_docker/github.com\/DovFork\/jd-docker/g" {} \;
-  #         find /tmp/jd-base -type f -exec sed -i -e "s/git@gitee.com:lxk0301\/jd_scripts.git/https:\/\/github.com\/DovFork\/jd-scripts/g" {} \;
-  #         find /tmp/jd-base -type f -exec sed -i -e "s/registry.npm.taobao.org/registry.npmjs.org/g" {} \;
-  #         mv -f /tmp/jd-base/* .
-  #         git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
-  #         git add . && git commit -am "Update" && git push || (echo "Everything up-to-date!" && echo "::set-output name=status::updated")
-      # - name: Set up Docker Buildx
-      #   if: steps.jd-base-update.outputs.status != 'updated'
-      #   uses: docker/setup-buildx-action@v1
-      # - name: Github Docker Login
-      #   if: steps.jd-base-update.outputs.status != 'updated'
-      #   uses: docker/login-action@v1
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.repository_owner }}
-      #     password: ${{ secrets.REPO_TOKEN }}
-      # - name: Build and push
-      #   if: steps.jd-base-update.outputs.status != 'updated'
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: ./jd-base
-      #     file: ./JD/Dockerfile
-      #     platforms: linux/amd64
-      #     push: true
-      #     tags: |
-      #       ghcr.io/apocalypsor/jd:latest
-
   microsoft-365-admin:
     runs-on: ubuntu-latest
     steps:
@@ -126,30 +57,126 @@ jobs:
       - name: Github ➡ Github
         id: microsoft-365-admin-update
         run: |
-          git clone https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Microsoft-365-Admin.git Microsoft-365-Admin
-          cd Microsoft-365-Admin && find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
-          git clone --depth 1 https://github.com/6mb/Microsoft-365-Admin /tmp/Microsoft-365-Admin
-          rm -rf /tmp/Microsoft-365-Admin/.git/
-          mv -f /tmp/Microsoft-365-Admin/* .
-          git config --global user.email "bot@github.com" && git config --global user.name "Auto Update Bot"
-          git add . && git commit -am "Update" && git push || (echo "Everything up-to-date!" && echo "::set-output name=status::updated")
+          RUNNER_DIR=`pwd`
+          sed -i "s/rm -rf \/tmp\/dest_repo/rm -rf/g" Scripts/sync.sh
+          bash Scripts/sync.sh \
+            https://github.com/6mb/Microsoft-365-Admin master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Microsoft-365-Admin
+          cat /tmp/update > /dev/null && mv /tmp/dest_repo $RUNNER_DIR || echo "::set-output name=status::updated"
       - name: Set up Docker Buildx
         if: steps.microsoft-365-admin-update.outputs.status != 'updated'
         uses: docker/setup-buildx-action@v1
       - name: Github Docker Login
-        if: steps.jd-base-update.outputs.status != 'updated'
+        if: steps.microsoft-365-admin-update.outputs.status != 'updated'
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          username: dovfork
           password: ${{ secrets.REPO_TOKEN }}
       - name: Build and push
         if: steps.microsoft-365-admin-update.outputs.status != 'updated'
         uses: docker/build-push-action@v2
         with:
-          context: ./Microsoft-365-Admin
-          file: ./Microsoft-365-Admin/Dockerfile
+          context: ./dest_repo
+          file: ./dest_repo/Dockerfile
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/apocalypsor/microsoft-365-admin:latest
+            ghcr.io/dovfork/microsoft-365-admin:latest
+
+  jd-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - uses: actions/checkout@v2
+      - name: Panel
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/whyour/qinglong master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-panel
+      - name: Bot
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/SuMaiKaDe/bot main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-bot
+      - name: JDHelloWorld
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/JDHelloWorld/jd_scripts main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-scripts
+      - name: hundun
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/whyour/hundun master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/hundun
+      - name: panghu
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/panghu999/panghu master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/panghu
+      - name: ZCY01
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/ZCY01/daily_scripts main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/ZCY01
+      - name: yangtingxiao
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/yangtingxiao/QuantumultX master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/yangtingxiao
+      - name: JDDJ
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/passerby-b/JDDJ main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JDDJ
+      - name: longzhuzhu
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/longzhuzhu/nianyu main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/longzhuzhu
+      - name: Wenmoux
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/Wenmoux/scripts wen \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Wenmoux
+      - name: Ariszy
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/Ariszy/Private-Script master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Ariszy
+      - name: hyzaw
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/hyzaw/scripts main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/hyzaw
+      - name: star261
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/star261/jd main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/star261
+      - name: moposmall
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/moposmall/Script main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/moposmall
+      - name: pxylen
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/pxylen/dog_jd master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/pxylen
+      - name: ztxtop
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/ztxtop/x main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/ztxtop
+      - name: zoo
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/zooPanda/zoo dev \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/zoo
+      - name: JD_Diy
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/chiupam/JD_Diy master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JD-Diy

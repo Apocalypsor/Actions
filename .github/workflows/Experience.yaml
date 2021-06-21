@@ -23,73 +23,49 @@ jobs:
         with:
           python-version: 3.x
       - name: Install dependencies
-        run: python -m pip install --upgrade requests
+        run: python -m pip install --upgrade requests pyaes 
       - name: BYZH Experience
         env:
           COOKIE: ${{ secrets.BYZH_COOKIE }}
         run: python Experience/buyizhihuo.py || echo "BYZH_FAIL=true" >> $GITHUB_ENV
-      - name: Notify
-        if: env.BYZH_FAIL
-        run: |
-          [ $BYZH_FAIL ] && python Notify.py '不移之火'
-
-  hostloc_get_points:
-    name: Hostloc Get Points
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Set Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Install dependencies
-        run: |
-          git clone --depth 1 https://github.com/Arronlong/py_scripts Experience
-          python -m pip install -r Experience/requirements.txt
-      - name: Install SeleniumBase
-        run: |
-          cd Experience && python setup.py install
-      - name: Install Chrome and Firefox
-        run: |
-          sudo apt install google-chrome-stable
-          sudo apt-get install firefox
-      - name: Get points
-        id: hostloc_get_points
+      - name: Hostloc Experience
         env:
           HOSTLOC_USERNAME: ${{ secrets.HOSTLOC_USERNAME }}
           HOSTLOC_PASSWORD: ${{ secrets.HOSTLOC_PASSWORD }}
-        run: python Experience/scripts/hostloc/hostloc_get_points.py || echo "::set-output name=status::Error"
-      - uses: actions/checkout@v2
-        if: steps.hostloc_get_points.outputs.status == 'Error'
+        run: python Experience/hostloc.py || echo "HOSTLOC_FAIL=true" >> $GITHUB_ENV
       - name: Notify
-        if: steps.hostloc_get_points.outputs.status == 'Error'
-        run: python Notify.py 'Hostloc'
-          
+        if: env.BYZH_FAIL || env.HOSTLOC_FAIL
+        run: |
+          [ $BYZH_FAIL ] && python Notify.py '不移之火'
+          [ $HOSTLOC_FAIL ] && python Notify.py 'Hostloc'
+
   tieba_experience:
     name: TieBa Experience
     runs-on: ubuntu-latest
     steps:
       - name: Sleep Random Time
         run: sleep $(shuf -i 10-60 -n 1)
-      - name: Set Python
-        uses: actions/setup-python@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
         with:
-          python-version: 3.6
-      - name: Install dependencies
-        run: |
-          git clone --depth 1 https://github.com/ghosx/tieba Experience
-          python -m pip install --upgrade requests
+          java-version: 1.8
+      - name: Clone
+        run: git clone --depth 1 https://github.com/tbaldwin1/TiebaSignIn Experience
       - name: Experience
         id: tieba_experience
         env:
           BDUSS: ${{ secrets.BAIDU_BDUSS }}
-        run: python Experience/main.py || echo "::set-output name=status::Error"
+        run: cd Experience && mvn compile exec:java -Dexec.mainClass="top.srcrs.Run" -Dexec.args="${BDUSS} ${PUSHINFO}" || echo "::set-output name=status::Error"
       - uses: actions/checkout@v2
         if: steps.tieba_experience.outputs.status == 'Error'
+      - name: Set Python
+        if: steps.tieba_experience.outputs.status == 'Error'
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
       - name: Notify
         if: steps.tieba_experience.outputs.status == 'Error'
-        run: python Notify.py '贴吧'
+        run: pip install requests && python Notify.py '贴吧'
   
   cloud189:
     name: Cloud189 Experience
@@ -145,25 +121,6 @@ jobs:
       - name: Notify
         if: steps.pojie_experience.outputs.status == 'Error'
         run: python Notify.py '吾爱破解'
-  
-#   pt_experience:
-#     name: PT Sites Experience
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Sleep Random Time
-#         run: sleep $(shuf -i 10-60 -n 1)
-#       - name: Experience
-#         env:
-#           URL: ${{ secrets.FLEXGET_CONFIG_URL }}
-#         run: |
-#           mkdir /tmp/config
-#           git clone --depth 1 https://github.com/IvonWei/flexget_qbittorrent_mod.git /tmp/config/plugins
-#           cd /tmp/config/plugins && git fetch --tags
-#           latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
-#           git checkout $latestTag
-#           curl -L ${{ secrets.FLEXGET_CONFIG_URL }} -o /tmp/config/config.yml
-#           docker run -d --name flexget -v /tmp/config:/config madwind/flexget
-#           sleep 60 && docker exec flexget flexget execute && docker rm -f flexget
 
   euserv:
     name: EUserv Extend
