@@ -185,3 +185,8 @@ jobs:
           bash Scripts/sync.sh \
             https://github.com/chiupam/JD_Diy master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JD-Diy
+      - name: Sunert
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/Sunert/Script master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Sunert
