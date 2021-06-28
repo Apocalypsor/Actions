@@ -105,11 +105,6 @@ jobs:
           bash Scripts/sync.sh \
             https://github.com/scjtqs/jd_cookie master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JD-Coookie
-      - name: JDC
-        run: |
-          bash Scripts/sync.sh \
-            https://github.com/colakele/JDC-kele main \
-            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JDC-kele
       - name: JDHelloWorld
         run: |
           bash Scripts/sync.sh \
