@@ -180,6 +180,11 @@ jobs:
           bash Scripts/sync.sh \
             https://github.com/zooPanda/zoo dev \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/zoo
+      - name: airacg
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/airacg/jd_task main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/airacg
       - name: JD_Diy
         run: |
           bash Scripts/sync.sh \
