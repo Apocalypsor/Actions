@@ -100,6 +100,11 @@ jobs:
           bash Scripts/sync.sh \
             https://github.com/SuMaiKaDe/bot main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-bot
+      - name: JD-Cookie
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/scjtqs/jd_cookie master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JD-Coookie
       - name: JDC
         run: |
           bash Scripts/sync.sh \
