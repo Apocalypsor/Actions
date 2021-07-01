@@ -126,11 +126,6 @@ jobs:
       - name: Sleep Random Time
         run: sleep $(shuf -i 10-60 -n 1)
       - uses: actions/checkout@v2
-      - name: Panel
-        run: |
-          bash Scripts/sync.sh \
-            https://github.com/whyour/qinglong master \
-            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-panel
       - name: Bot
         run: |
           bash Scripts/sync.sh \
