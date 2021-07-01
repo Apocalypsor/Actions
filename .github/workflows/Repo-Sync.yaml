@@ -84,6 +84,42 @@ jobs:
           tags: |
             ghcr.io/dovfork/microsoft-365-admin:latest
 
+  jd-panel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - uses: actions/checkout@v2
+      - name: Github ➡ Github
+        id: jd-panel-update
+        run: |
+          RUNNER_DIR=`pwd`
+          sed -i "s/rm -rf \/tmp\/dest_repo/rm -rf/g" Scripts/sync.sh
+          bash Scripts/sync.sh \
+            https://github.com/whyour/qinglong master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-panel
+          cat /tmp/update > /dev/null && mv /tmp/dest_repo $RUNNER_DIR || echo "::set-output name=status::updated"
+      - name: Set up Docker Buildx
+        if: steps.jd-panel-update.outputs.status != 'updated'
+        uses: docker/setup-buildx-action@v1
+      - name: Github Docker Login
+        if: steps.jd-panel-update.outputs.status != 'updated'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: dovfork
+          password: ${{ secrets.REPO_TOKEN }}
+      - name: Build and push
+        if: steps.jd-panel-update.outputs.status != 'updated'
+        uses: docker/build-push-action@v2
+        with:
+          context: ./dest_repo
+          file: ./dest_repo/docker/Dockerfile
+          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/s390x
+          push: true
+          tags: |
+            ghcr.io/dovfork/jd-panel:latest
+
   jd-scripts:
     runs-on: ubuntu-latest
     steps:
