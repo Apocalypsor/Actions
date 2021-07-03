@@ -5617,7 +5617,7 @@ class Dwnc:
                     "redpack_num": 95,
                     "redpack_rate": 0.0105263157894737,
                     "unlock": 85,
-                    "desc": "洋葱原产亚洲西部，是中国主栽蔬菜之一。肉质柔嫩，汁多辣味淡，品质佳，适于生食。被誉为“菜中皇后”，营养价值较高。"
+                    "desc": "洋葱原产亚洲西部，是中国主栽蔬菜之一。肉质柔嫩，汁多辣味淡，品质佳，适于生食。被誉为"菜中皇后"，营养价值较高。"
                 },
                 "20": {
                     "id": 20,
@@ -6661,14 +6661,15 @@ class Dwnc:
         is_take = False
         for task_id, task in tasks.items():
             if task_id != '0':
-                need_done = self.task_daily.get(task_id)['times']
-                done_num = task['done']
-                if need_done == done_num and not task['isTake']:
-                    # todo task done
-                    self.random_wait(1, 2, message=f'完成任务{self.task_daily.get(task_id)["name"]}')
-                    self.get('/task/takeDayAward', {'taskid': task_id})
-                else:
-                    is_take = task['isTake']
+                if self.task_daily.get(task_id):
+                    need_done = self.task_daily.get(task_id)['times']
+                    done_num = task['done']
+                    if need_done == done_num and not task['isTake']:
+                        # todo task done
+                        self.random_wait(1, 2, message=f'完成任务{self.task_daily.get(task_id)["name"]}')
+                        self.get('/task/takeDayAward', {'taskid': task_id})
+                    else:
+                        is_take = task['isTake']
 
         total = data['total']
         done = data['done']
@@ -7093,8 +7094,8 @@ if __name__ == '__main__':
     accounts = os.getenv('DWNC_AUTH')
     if not accounts:
         print('请设置环境变量DWNC_AUTH', flush=True)
-    
-    # ua 【非必填】    
+
+    # ua 【非必填】
     # ua = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.7(0x1800072d) NetType/WIFI Language/zh_CN"
     ua = os.getenv('DWNC_UA')
 
@@ -7103,15 +7104,15 @@ if __name__ == '__main__':
     if ua:
         print(f'DWNC_UA:{ua}', flush=True)
     if version:
-        Dwnc.VERSION = version
+        Dwnc.VERSION = version if version else '1.2.0'
         print(f'DWNC_VERSION:{version}', flush=True)
     accounts = [parse(account) for account in accounts.split('&') if account]
     accounts = [Dwnc(**account, ua=ua) for account in accounts]
 
     print(f'总计{len(accounts)}个账号', flush=True)
     while True:
-        try:
-            for dwnc in accounts:
+        for dwnc in accounts:
+            try:
                 print(f'---------------当前账号: {dwnc.account}------------------')
                 dwnc.login()
                 if last and not dwnc.is_help:
@@ -7144,10 +7145,10 @@ if __name__ == '__main__':
                 last = dwnc
                 dwnc._cache = {}
                 print('-------------------------------------------------\n\n\n\n')
+            except Exception as e:
+                print(e, flush=True)
+        if datetime.datetime.now().hour >= 22:
+            break
 
-            if datetime.datetime.now().hour >= 22:
-                break
-        except Exception as e:
-            print(e, flush=True)
 
         Dwnc.random_wait(200, 900, message='休息一会儿～～～～')
