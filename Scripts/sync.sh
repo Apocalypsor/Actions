@@ -45,7 +45,7 @@ if [ -d "/tmp/source_repo" ]; then
     
     if [[ $params == *"ts2js"* ]]
     then
-        if $(find ./ -name "*.ts")
+        if [ "$(find ./ -name \"*.ts\")" ]
         then
             echo "Converting Typescript files ..."
             npm install typescript
