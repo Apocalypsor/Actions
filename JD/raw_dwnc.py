@@ -19,7 +19,7 @@ else:
 
 class Dwnc:
     GAME_ID = 'dwnc'
-    VERSION = '1.2.1'
+    VERSION = '1.2.2'
     ENV = 'release'
     IGNORE_URLS = ['/login']
 
@@ -78,7 +78,7 @@ class Dwnc:
             'Host': 'cos.ucpopo.com',
             'content-type': 'application/x-www-form-urlencoded',
             'User-Agent': self.ua,
-            'Referer': 'https://servicewechat.com/wxdbbf991feed9e2ba/22/page-frame.html',
+            'Referer': 'https://servicewechat.com/wxdbbf991feed9e2ba/24/page-frame.html',
         }
         url = f'https://cos.ucpopo.com/dwnc/settings/v{self.VERSION}.json?ts={int(time.time())}'
         res = requests.get(url, headers=headers)
@@ -160,8 +160,11 @@ class Dwnc:
         return d
 
     def get(self, url, data=None):
-        t = time.time() * 1000
+        # 1625505649919
+        # 1625505910984
+        t = int(time.time() * 1000)
         data = data if data else {}
+        raw_data = data
         data['openid'] = self.openid
         data['sessid'] = self.sessid
 
@@ -169,12 +172,14 @@ class Dwnc:
             data['gameid'] = self.GAME_ID
             data['ver'] = self.VERSION
             data['t'] = t
+            data['env'] = self.ENV
         else:
             c = self.encode(data, t)
             data = {
                 'c': c,
                 'gameid': self.GAME_ID,
                 'ver': self.VERSION,
+                'env': self.ENV,
                 't': t
             }
         if not url.startswith('http'):
@@ -184,15 +189,20 @@ class Dwnc:
             'Host': 'minigame.ucpopo.com',
             'content-type': 'application/x-www-form-urlencoded',
             'User-Agent': self.ua,
-            'Referer': 'https://servicewechat.com/wxdbbf991feed9e2ba/14/page-frame.html',
+            'Referer': 'https://servicewechat.com/wxdbbf991feed9e2ba/24/page-frame.html',
         }
 
-        return requests.get(url, params=data, headers=headers)
+        res = requests.get(url, params=data, headers=headers)
+        data = res.json()
+        err = data.get('errMsg')
+        if err:
+            self.print(f'{url}\t{json.dumps(raw_data)}')
+            self.print(err)
+        return data
 
     def sign(self):
         self.look_video('other', message='签到看广告')
-        res = self.get('/sign/continuousSign', {'isVideo': 2})
-        data = res.json()
+        data = self.get('/sign/continuousSign', {'isVideo': 2})
         times = data['signContinuous']['times']
         self.exp = data['exp']
         self.gold = data['gold']
@@ -215,8 +225,7 @@ class Dwnc:
             self.print('已打卡')
 
     def login(self):
-        res = self.get('/login')
-        data = res.json()
+        data = self.get('/login')
         if 'user' not in data.keys():
             if CAN_NOTIFY:
                 send('动物农场', content=f'{self.account}\t登录失效, 换设备打开小程序，原有登录信息会过期，请重新获取')
@@ -271,13 +280,11 @@ class Dwnc:
     def reap(self, id, crop_id, red=False):
         if self.is_full():
             return
-        res = self.get('/land/reap', {'landid': id, 'isVideo': self.get_is_video(can_zero=False) if red else 0})
-        data = res.json()
-        # print(res.json())
+        data = self.get('/land/reap', {'landid': id, 'isVideo': self.get_is_video(can_zero=False) if red else 0})
         if data.get('crop'):
             self.update_warehouse(data['crop'], crop_id)
         else:
-            print(res.json(), flush=True)
+            print(data, flush=True)
 
         self.random_wait(1, 3, message=f'收取{id}号田')
 
@@ -294,8 +301,7 @@ class Dwnc:
         if not self.can_speed:
             return self.print('今日视频加速次数已达到上限')
         self.look_video('land_speed', message=f'加速{id}号田看广告')
-        res = self.get('/land/videoSpeed', {'landid': id, 'isVideo': self.get_is_video(can_zero=False)})
-        data = res.json()
+        data = self.get('/land/videoSpeed', {'landid': id, 'isVideo': self.get_is_video(can_zero=False)})
         now = time.time() * 1000
         if data.get('errMsg'):
             print('已达到上限')
@@ -352,8 +358,7 @@ class Dwnc:
             seed = self.get_seed_id()
             seed_id = seed['id']
         self.random_wait(1, 2, message=f'种植第{landid}块地')
-        res = self.get('/land/plant', {'seedid': seed_id, 'landid': landid})
-        # pprint(res.json())
+        self.get('/land/plant', {'seedid': seed_id, 'landid': landid})
 
     def check_level(self):
         level_info = self.level_info.get(str(self.level))
@@ -387,8 +392,7 @@ class Dwnc:
                             finish = False
 
                 if finish:
-                    res = self.get('/order/done', {'orderid': order_id})
-                    pprint(res.json())
+                    self.get('/order/done', {'orderid': order_id})
                     self.random_wait(1, 2, message=f'完成订单{order_id}')
                     for good in goods:
                         good_id = good['id']
@@ -405,15 +409,13 @@ class Dwnc:
         not unlock) and self.can_video:
             order_id = len(self.orders.items()) + 1
             self.look_video('video_advert', message=f'解锁第{order_id}个订单')
-            res = self.get('/order/videoUnlock', {'orderid': order_id})
-            print(res.json())
+            self.get('/order/videoUnlock', {'orderid': order_id})
 
     def check_unlock_land(self):
         self.get('/land/unlock', {'landid': '1'})
 
     def check_daily(self):
-        res = self.get('/task/getDayList')
-        data = res.json()
+        data = self.get('/task/getDayList')
         tasks = data['taskDay']
         is_take = False
         for task_id, task in tasks.items():
@@ -439,16 +441,14 @@ class Dwnc:
         done = data['done']
 
         if total == done and not is_take:
-            res = self.get('/task/takeChest')
-            pprint(res.json())
+            self.get('/task/takeChest')
 
     def check_worker(self):
         for i in range(len(self.land_list)):
             if (i + 1 > len(self.worker_list) or not self.worker_list.get(str(i + 1)).get('unlock')) and self.can_video:
                 self.look_video('video_advert', message=f'看视频解锁工人{i + 1}')
-                res = self.get('/worker/videoUnlock', {'workerid': str(i + 1)})
-                pprint(res.json())
-                num = res.json()['worker']['video']
+                data = self.get('/worker/videoUnlock', {'workerid': str(i + 1)})
+                num = data['worker']['video']
                 self.print(f'解锁进度：{num} / {self.worker_info.get(str(i + 1))["unlock_video"]}')
                 if int(num) == int(self.worker_info.get(str(i + 1))["unlock_video"]):
                     return True
@@ -460,8 +460,7 @@ class Dwnc:
         has_ten = False
         for _ in range(3):
             self.random_wait(1,3)
-            res = self.get('/worker/getCatchList')
-            data = res.json()
+            data = self.get('/worker/getCatchList')
             for work in data.get('catchList', []):
                 if not work.get('master', {}).get('id'):
                     level = work['level']
@@ -482,22 +481,19 @@ class Dwnc:
                 worker = self.get_work()
                 if worker:
                     worker = worker[0]
-                    res = self.get('/worker/catch', {'workerid': k, 'otherid': worker[1]})
+                    self.get('/worker/catch', {'workerid': k, 'otherid': worker[1]})
                     self.day_times['worker_catch'] += 1
-                    pprint(res.json())
             elif info.get('status') == 0:
                 # todo 放
                 if info.get('createtime'):
                     work_time = (time.time() - info['createtime'] // 1000) // 3600
                     if work_time >= 12:
                         self.random_wait(0.5, 1)
-                        res = self.get('/worker/free', {'workerid': k})
-                        pprint(res.json())
+                        self.get('/worker/free', {'workerid': k})
 
             if info.get('gold', 0) > 1000:
                 self.random_wait(0.5, 1)
-                res = self.get('/worker/takeGold', {'workerid': k})
-                data = res.json()
+                data = self.get('/worker/takeGold', {'workerid': k})
                 self.update_gold(data)
 
     def check_open(self):
@@ -567,12 +563,10 @@ class Dwnc:
                 self.print(f'解锁{types[str(skip_type)]["name"]}({info["name"]})所需: \t等级{self.level}/{need_level}\t金币:{self.gold}/{cost}({round(self.gold / cost * 100, 2) if cost else 100}%)')
                 if self.gold >= cost and self.level >= need_level:
                     if skip_type >= 5 and self.level < 30:
-                        res = self.get('/land/unlock', {'landid': str(skip_type - 4)})
-                        pprint(res.json())
+                        self.get('/land/unlock', {'landid': str(skip_type - 4)})
                         self.random_wait(1, 2, message=f'解锁{info["name"]}')
                     else:
-                        res = self.get('/skin/unlock', {'skinid': skin_id})
-                        pprint(res.json())
+                        self.get('/skin/unlock', {'skinid': skin_id})
                         self.random_wait(1, 2, message=f'解锁{info["name"]}')
                 continue_type.append(skip_type)
 
@@ -592,18 +586,16 @@ class Dwnc:
                 cost = info['skip_info']['cost']
                 self.print(f'解锁地块{landid}所需: \t等级{self.level}/{need_level}\t金币:{self.gold}/{cost}({round(self.gold / cost * 100, 2) if cost else 100}%)')
                 if self.gold >= cost and self.level >= need_level:
-                    res = self.get('/land/unlock', {'landid': str(landid)})
+                    self.get('/land/unlock', {'landid': str(landid)})
                     self.print(f'解锁地块{landid}')
-                    pprint(res.json())
                 break
 
     def get_offline_award(self):
         try:
             duration = time.time() - self.helper_info['takeAwardTime'] / 1000
             if duration > 10000:
-                res = self.get('/helper/takeOfflineAward',
+                data = self.get('/helper/takeOfflineAward',
                                {'isVideo': self.look_video('offline', message='看广告拿金币') if self.can_gold else 0})
-                data = res.json()
                 self.random_wait(1, 2, message=f'获取离线金币成功，当前金币{data["gold"]}')
                 self.gold = data['gold']
         except Exception as e:
@@ -612,24 +604,21 @@ class Dwnc:
     def check_helper_level(self):
         if self.helper_info['level'] < self.level and self.can_video:
             self.look_video('video_advert', message='看广告升级管家中……')
-            res = self.get('/helper/levelup', {})
-            self.helper_info = res.json()['helper']
-            print(res.json())
+            data = self.get('/helper/levelup', {})
+            self.helper_info = data['helper']
 
     def check_cash(self):
         self.print(f'当前资产：{self.redpack}🧧，兑换券{self.coupon}张, 💰{self.cash / 100}元')
         if self.redpack >= 500 and self.coupon >= 5:
             self.random_wait(1, 2, message='兑换5元红包')
-            res = self.get('/user/redpack2cash', {'num': '500'})
-            data = res.json()
+            data = self.get('/user/redpack2cash', {'num': '500'})
             self.cash = data['cash']
             self.coupon = data['coupon']
             self.redpack = data['redpack']
 
         if self.cash > 30 and self.first:
             self.random_wait(1, 2, message=f'提现红包{self.cash / 100}元')
-            res = self.get('/user/withdraw', {})
-            pprint(res.json())
+            self.get('/user/withdraw', {})
             if CAN_NOTIFY:
                 send('动物农场', content=f'{self.account}\t提现红包{self.cash / 100}元')
             self.first = False
@@ -639,16 +628,14 @@ class Dwnc:
             for i in range(9):
                 if not self.auction_list.get(str(i + 1), {}).get('unlock'):
                     self.look_video('video_advert', message='解锁拍卖位')
-                    res = self.get('/auction/videoUnlock', {'auctionid': str(i + 1)})
-                    pprint(res.json())
+                    self.get('/auction/videoUnlock', {'auctionid': str(i + 1)})
                     return
 
     def check_unlock_skin(self):
         for k, v in self.skip_info.items():
             if k not in self.skip_list.keys() and self.level >= v['level'] and self.gold >= v['cost']:
                 self.random_wait(1, 2, message=f'解锁{v["name"]}')
-                res = self.get('/skin/unloc', {'skinid': k})
-                pprint(res.json())
+                self.get('/skin/unloc', {'skinid': k})
 
     def is_full(self, rate=1.0):
         skin_id = self.building_info.get('2')
@@ -692,8 +679,7 @@ class Dwnc:
             # self.print(f'查找低价拍卖,第{page}页, 从缓存')
             return rs
         self.random_wait(1, 2, message=f'查找低价拍卖,第{page}页')
-        res = self.get('/auction/getList', {'page': page})
-        data = res.json()
+        data = self.get('/auction/getList', {'page': page})
         if data.get('pageMax'):
             self._cache[page] = data
         return data
@@ -720,8 +706,7 @@ class Dwnc:
                 if is_target and self.seeds_info.get(str(good_id), {}).get('order_gold',
                                                              15) * k >= price and self.gold >= total_price and not self.is_full(full):
                     self.random_wait(1, 2, message=f'购买 {self.seeds_info.get(str(good_id))["name"]}*{good["auction"]["num"]}, 单价:{price}, 花费:{total_price}')
-                    res = self.get('/auction/buy', {'sellerid': open_id, 'auctionid': auctionid})
-                    data = res.json()
+                    data = self.get('/auction/buy', {'sellerid': open_id, 'auctionid': auctionid})
                     if data.get('errMsg'):
                         self.print(data.get('errMsg'))
                     else:
@@ -768,8 +753,7 @@ class Dwnc:
 
         self.get('/visit/lookUser', {'lookid': openid})
         self.random_wait(1, 2)
-        res = self.get('/visit/lookFarm', {'lookid': openid})
-        data = res.json()
+        data = self.get('/visit/lookFarm', {'lookid': openid})
         water_land_ids = []
         land_list = data['landList']
         self.random_wait(1, 2)
@@ -783,11 +767,11 @@ class Dwnc:
         for land in water_land_ids:
             if self.day_times.get('land_water', 0) < self.config.get('DAY_WATER_MAX', 20):
                 self.random_wait(0.1, 1, '浇水一次')
-                res = self.get('/visit/water', {'lookid': openid, 'landid': land})
+                data = self.get('/visit/water', {'lookid': openid, 'landid': land})
                 try:
-                    land_list[land] = res.json()['land']
+                    land_list[land] = data['land']
                 except Exception as e:
-                    pprint(res.json())
+                    pprint(data)
                 self.day_times['land_water'] = self.day_times['land_water'] + 1
                 water_times += 1
                 if water_times >= 3:
@@ -802,10 +786,8 @@ class Dwnc:
             if self.is_full():
                 break
             self.random_wait(0.1, 1, '偷一次')
-            res = self.get('/visit/steal', {'lookid': openid, 'landid': land})
-            data = res.json()
+            data = self.get('/visit/steal', {'lookid': openid, 'landid': land})
             self.update_warehouse(data['crop'], crop=info['cropid'])
-            pprint(res.json())
 
     def get_unlack_good(self):
         needs = defaultdict(int)
@@ -828,9 +810,7 @@ class Dwnc:
         return unlack
 
     def on_buy(self):
-        res = self.get('/auction/getMy')
-        data = res.json()
-        pprint(data)
+        data = self.get('/auction/getMy')
         unlack_goods = self.get_unlack_good()
         unlack_good_ids = list(unlack_goods.keys())
         random.shuffle(unlack_good_ids)
@@ -845,9 +825,7 @@ class Dwnc:
 
             if buyer_id:
                 self.random_wait(1, 2, message=f'收取拍卖')
-                res = self.get('/auction/takeGold', {'auctionid': k})
-                data = res.json()
-                pprint(data)
+                self.get('/auction/takeGold', {'auctionid': k})
 
                 if unlack_good_ids:
                     sell_good_id = unlack_good_ids.pop()
@@ -855,8 +833,6 @@ class Dwnc:
                     num = num if num <= 20 else 20
                     self.random_wait(1,2, message=f'拍卖上架{num}个{self.seeds_info[sell_good_id]["name"]}')
                     self.get('/auction/on', {'auctionid': k, 'goodid': sell_good_id, 'num': num, 'price': self.seeds_info[sell_good_id]['order_gold'] * 3, 'time': 2})
-                    data = res.json()
-                    pprint(data)
 
             if not buyer_id and not expire_time and unlock:
                 if unlack_good_ids:
@@ -865,23 +841,18 @@ class Dwnc:
                     num = num if num <= 20 else 20
                     self.random_wait(1,2, message=f'拍卖上架{num}个{self.seeds_info[sell_good_id]["name"]}')
                     self.get('/auction/on', {'auctionid': k, 'goodid': sell_good_id, 'num': num, 'price': self.seeds_info[sell_good_id]['order_gold'] * 3, 'time': 2})
-                    data = res.json()
-                    pprint(data)
 
     def get_gold(self):
         if self.can_gold:
-            res = self.get('/user/getGold', {'isVideo': self.look_video('get_gold', message='看广告获取金币')})
-            data = res.json()
-            self.gold = data['gold']
-            pprint(data)
+            data = self.get('/user/getGold', {'isVideo': self.look_video('get_gold', message='看广告获取金币')})
+            self.gold = data.get('gold') if data.get('gold') else self.gold
 
     def check_task_main(self):
         if self.task_main.get('done'):
             task_id = self.task_main.get('id')
             if task_id:
                 self.random_wait(1, 2, message=f"完成任务{self.task_main.get('name')}")
-                res = self.get("/task/takeMainAward", {'taskid': task_id})
-                data = res.json()
+                data = self.get("/task/takeMainAward", {'taskid': task_id})
                 self.update(data)
 
     def thief_win(self):
@@ -909,15 +880,14 @@ class Dwnc:
         if need_num <= 0:
             self.random_wait(50, 70, message='正在挑战盗贼')
             if r < win_rate:
-                res = self.get('/activity/thief/win', {'thiefid': thief_id, 'bullet': random.randint(self.thief_info[thief_id]["hp_max"] * 2, self.thief_info[thief_id]["hp_max"] * 3)})
+                data = self.get('/activity/thief/win', {'thiefid': thief_id, 'bullet': random.randint(self.thief_info[thief_id]["hp_max"] * 2, self.thief_info[thief_id]["hp_max"] * 3)})
                 self.random_wait(1, 2, message=f'挑战盗贼:{self.thief_info[thief_id]["name"]}成功')
             else:
-                res = self.get('/activity/thief/lose', {'thiefid': thief_id, 'bullet': random.randint(self.thief_info[thief_id]["hp_max"] * 2, self.thief_info[thief_id]["hp_max"] * 3)})
+                data = self.get('/activity/thief/lose', {'thiefid': thief_id, 'bullet': random.randint(self.thief_info[thief_id]["hp_max"] * 2, self.thief_info[thief_id]["hp_max"] * 3)})
                 self.random_wait(1, 2, message=f'挑战盗贼:{self.thief_info[thief_id]["name"]}失败')
 
-            data = res.json()
-            pprint(data)
             self.update(data)
+
 
 if __name__ == '__main__':
     last = None
@@ -943,7 +913,7 @@ if __name__ == '__main__':
     ua = os.getenv('DWNC_UA')
 
     # version = "1.1.9"
-    version = os.getenv('DWNC_VERSION', '1.2.1')
+    version = os.getenv('DWNC_VERSION', '1.2.2')
     if ua:
         print(f'DWNC_UA:{ua}', flush=True)
     if version:
@@ -963,12 +933,12 @@ if __name__ == '__main__':
                 dwnc.login()
                 dwnc.get_gold()
                 dwnc.thief_win()
-                # dwnc.buy()
+                dwnc.buy()
                 dwnc.on_buy()
                 dwnc.get_offline_award()
                 dwnc.check_catch_worker()
-                dwnc.check_cash()
                 dwnc.check_sign()
+                dwnc.check_cash()
                 dwnc.check_open()
                 dwnc.check_level()
                 dwnc.check_daily()
@@ -990,8 +960,8 @@ if __name__ == '__main__':
                 print('-------------------------------------------------\n\n\n\n')
             except Exception as e:
                 print(e, flush=True)
-        if datetime.datetime.now().hour >= end_time_hour:
-            break
+            if datetime.datetime.now().hour >= end_time_hour:
+                break
 
         end_time_hour = int(os.getenv('DWNC_ENDTIME_HOUR', 22))
         Dwnc.VERSION = os.getenv('DWNC_VERSION', '1.2.1')
