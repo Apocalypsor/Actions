@@ -237,3 +237,8 @@ jobs:
           bash Scripts/sync.sh \
             https://github.com/curtinlv/JD-Script main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/curtinlv
+      - name: Tsukasa007
+        run: |
+          bash Scripts/sync.sh \
+            https://github.com/Tsukasa007/my_script master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Tsukasa007
