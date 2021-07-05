@@ -32,6 +32,7 @@ echo "-----------------------Cloning destination repo-----------------------"
 git clone $dest_repo /tmp/dest_repo
 cd /tmp/dest_repo
 find . -maxdepth 1 -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null
+mkdir /tmp/backup
 
 echo
 echo "--------------------------Cloning source repo-------------------------"
@@ -49,8 +50,13 @@ if [ -d "/tmp/source_repo" ]; then
         if [ "$ts_exist" ]
         then
             echo "Converting Typescript files ..."
-            npm install typescript
+            [ -f "package.json" ] && cp package.json /tmp/backup/ts-package.json
+            [ -f "package-lock.json" ] && cp package-lock.json /tmp/backup/ts-package-lock.json
+            npm install typescript fs axios
             find ./ -name "*.ts" -exec ./node_modules/.bin/tsc {} \;
+            rm -rf node_modules
+            [ -f "/tmp/backup/ts-package.json" ] && mv -f /tmp/backup/ts-package.json package.json
+            [ -f "/tmp/backup/ts-package-lock.json" ] && mv -f /tmp/backup/ts-package-lock.json package-lock.json
         fi
     fi
     
@@ -68,9 +74,9 @@ if [ -d "/tmp/source_repo" ]; then
     
     if [[ $params == *"keep"* ]]
     then
-        rm -rf /tmp/source_repo
+        rm -rf /tmp/source_repo /tmp/backup
     else
-        rm -rf /tmp/dest_repo /tmp/source_repo
+        rm -rf /tmp/dest_repo /tmp/source_repo /tmp/backup
     fi
 
 else
