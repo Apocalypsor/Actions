@@ -52,7 +52,7 @@ if [ -d "/tmp/source_repo" ]; then
             echo "Converting Typescript files ..."
             [ -f "package.json" ] && cp package.json /tmp/backup/ts-package.json
             [ -f "package-lock.json" ] && cp package-lock.json /tmp/backup/ts-package-lock.json
-            npm install typescript fs axios
+            npm install typescript
             find ./ -name "*.ts" -exec ./node_modules/.bin/tsc {} \;
             rm -rf node_modules
             [ -f "/tmp/backup/ts-package.json" ] && mv -f /tmp/backup/ts-package.json package.json
