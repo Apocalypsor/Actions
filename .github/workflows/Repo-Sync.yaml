@@ -57,11 +57,9 @@ jobs:
       - name: Github ➡ Github
         id: microsoft-365-admin-update
         run: |
-          RUNNER_DIR=`pwd`
-          sed -i "s/rm -rf \/tmp\/dest_repo/rm -rf/g" Scripts/sync.sh
           bash Scripts/sync.sh \
             https://github.com/6mb/Microsoft-365-Admin master \
-            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Microsoft-365-Admin
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Microsoft-365-Admin keep
           cat /tmp/update > /dev/null && mv /tmp/dest_repo $RUNNER_DIR || echo "::set-output name=status::updated"
       - name: Set up Docker Buildx
         if: steps.microsoft-365-admin-update.outputs.status != 'updated'
@@ -93,11 +91,9 @@ jobs:
       - name: Github ➡ Github
         id: jd-panel-update
         run: |
-          RUNNER_DIR=`pwd`
-          sed -i "s/rm -rf \/tmp\/dest_repo/rm -rf/g" Scripts/sync.sh
           bash Scripts/sync.sh \
             https://github.com/whyour/qinglong master \
-            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-panel
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-panel keep
           cat /tmp/update > /dev/null && mv /tmp/dest_repo $RUNNER_DIR || echo "::set-output name=status::updated"
       - name: Set up Docker Buildx
         if: steps.jd-panel-update.outputs.status != 'updated'
@@ -129,11 +125,9 @@ jobs:
       - name: Github ➡ Github
         id: jd-cookie-update
         run: |
-          RUNNER_DIR=`pwd`
-          sed -i "s/rm -rf \/tmp\/dest_repo/rm -rf/g" Scripts/sync.sh
           bash Scripts/sync.sh \
             https://github.com/scjtqs/jd_cookie master \
-            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JD-Coookie
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JD-Coookie keep
           cat /tmp/update > /dev/null && mv /tmp/dest_repo $RUNNER_DIR || echo "::set-output name=status::updated"
       - name: Set up Docker Buildx
         if: steps.jd-cookie-update.outputs.status != 'updated'
@@ -162,6 +156,10 @@ jobs:
       - name: Sleep Random Time
         run: sleep $(shuf -i 10-60 -n 1)
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 'lts/*'
+      - run: npm install -g typescript
       - name: Bot
         run: |
           bash Scripts/sync.sh \
@@ -171,7 +169,7 @@ jobs:
         run: |
           bash Scripts/sync.sh \
             https://github.com/JDHelloWorld/jd_scripts main \
-            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-scripts
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-scripts ts2js
       - name: hundun
         run: |
           bash Scripts/sync.sh \

@@ -1,6 +1,14 @@
+###########################################
+# author: Apocalypsor                     #
+# params: (combine with _)                #
+#   - keep: keep /tmp/dest_repo           #
+#   - ts2js: convert ts to js             #
+###########################################
+
 source_repo=$1
 source_branch=$2
 dest_repo=$3
+params=$4
 
 commit(){
     git config user.email " 41898282+github-actions[bot]@users.noreply.github.com"
@@ -34,6 +42,16 @@ if [ -d "/tmp/source_repo" ]; then
     echo
     echo "-----------------------------Syncing repo-----------------------------"
     mv -f /tmp/source_repo/* /tmp/dest_repo
+    
+    if [[ $params == *"ts2js"* ]]
+    then
+        if $(find ./ -name "*.ts")
+        then
+            echo "Converting Typescript files ..."
+            find ./ -name "*.ts" -exec tsc {} \;
+        fi
+    fi
+    
     rm -f README.md
     commit
 
@@ -41,12 +59,18 @@ if [ -d "/tmp/source_repo" ]; then
     if $update
     then
         echo "Repo updated!"
-        rm -rf /tmp/dest_repo /tmp/source_repo
         echo "update" > /tmp/update
     else
         echo "Repo already up-to-date!"
+    fi
+    
+    if [[ $params == *"keep"* ]]
+    then
+        rm -rf /tmp/source_repo
+    else
         rm -rf /tmp/dest_repo /tmp/source_repo
     fi
+
 else
     echo
     echo "Error source repo!"
