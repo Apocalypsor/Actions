@@ -48,7 +48,8 @@ if [ -d "/tmp/source_repo" ]; then
         if $(find ./ -name "*.ts")
         then
             echo "Converting Typescript files ..."
-            find ./ -name "*.ts" -exec tsc {} \;
+            npm install typescript
+            find ./ -name "*.ts" -exec ./node_modules/.bin/tsc {} \;
         fi
     fi
     
