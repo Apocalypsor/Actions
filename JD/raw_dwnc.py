@@ -19,12 +19,15 @@ else:
 
 class Dwnc:
     GAME_ID = 'dwnc'
-    VERSION = os.getenv('DWNC_VERSION') if os.getenv('DWNC_VERSION') else '1.2.0'
+    VERSION = '1.2.1'
     ENV = 'release'
     IGNORE_URLS = ['/login']
 
-    def __init__(self, openid=None, sessid=None, account=None, ua=None):
-        self.ua = ua if ua else 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.7(0x1800072d) NetType/WIFI Language/zh_CN'
+    def __init__(self, openid=None, sessid=None, account=None, ua=None, character=None):
+        self.ua = ua if ua else 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_5_1 like Mac OS X)' \
+                                ' AppleWebKit/605.1.15 (KHTML, like Gecko)' \
+                                ' Mobile/15E148 MicroMessenger/8.0.7(0x1800072d) NetType/WIFI Language/zh_CN'
+        self.character = 'Tomato Tycoon' if character in ['Tomato Tycoon', '番茄大亨', 'TomatoTycoon'] else '普通人'
         self.account = account if account else openid
         self.openid = openid
         self.sessid = sessid
@@ -33,7 +36,9 @@ class Dwnc:
         if not self.sessid:
             raise Exception('请检查sessid是否填写')
         self.first = True
-        self.is_help = False
+        # self.is_help = False
+        self.order_task_finished = False
+        self.invite_water_finished = False
         self._cache = {}
         self.level = 0
         self.gold = 0
@@ -43,6 +48,7 @@ class Dwnc:
         self.diamond = 0
         self.cash = 0
         self.skip_info = {}
+        self.sign_week_info = {}
         self.building_info = {}
         self.skip_list = {}
         self.thief_info = {}
@@ -76,7 +82,7 @@ class Dwnc:
         }
         url = f'https://cos.ucpopo.com/dwnc/settings/v{self.VERSION}.json?ts={int(time.time())}'
         res = requests.get(url, headers=headers)
-        if res.status_code is not 200:
+        if res.status_code != 200:
             raise Exception("配置文件获取失败，请检查版本号DWNC_VERSION是否正确")
         setting = res.json()
         self.thief_info = setting['thiefInfo']
@@ -201,6 +207,13 @@ class Dwnc:
         else:
             self.print('已签到')
 
+        w = datetime.datetime.now().weekday()
+        week_sign = self.sign_week_info.get(str(w + 1))
+        if not week_sign:
+            self.get('/sign/weekSign', {'isVideo': 2})
+        else:
+            self.print('已打卡')
+
     def login(self):
         res = self.get('/login')
         data = res.json()
@@ -231,6 +244,7 @@ class Dwnc:
         self.orders = data['user']['orderList']
         self.warehouse = data['user']['cropList']
         self.sign_info = data['user']['signContinuous']
+        self.sign_week_info = data['user']['signList']
         self.helper_info = data['user']['helper']
         self.skip_list = data['user']['skinList']
         self.building_info = data['user']['skinType']
@@ -332,8 +346,11 @@ class Dwnc:
         return seeds
 
     def plant(self, landid):
-        seed = self.get_seed_id()
-        seed_id = seed['id']
+        if self.character == 'Tomato Tycoon':
+            seed_id = '1'
+        else:
+            seed = self.get_seed_id()
+            seed_id = seed['id']
         self.random_wait(1, 2, message=f'种植第{landid}块地')
         res = self.get('/land/plant', {'seedid': seed_id, 'landid': landid})
         # pprint(res.json())
@@ -352,6 +369,8 @@ class Dwnc:
         for order_id, order_info in self.orders.items():
             goods = order_info.get('goods')
             if goods:
+                if self.order_task_finished and self.character == 'Tomato Tycoon':
+                    continue
                 finish = True
                 for good in goods:
                     good_id = good['id']
@@ -398,6 +417,7 @@ class Dwnc:
         tasks = data['taskDay']
         is_take = False
         for task_id, task in tasks.items():
+            task_name = self.task_daily.get(task_id)["name"]
             if task_id != '0':
                 if self.task_daily.get(task_id):
                     need_done = self.task_daily.get(task_id)['times']
@@ -408,6 +428,12 @@ class Dwnc:
                         self.get('/task/takeDayAward', {'taskid': task_id})
                     else:
                         is_take = task['isTake']
+                        if is_take:
+                            if '完成订单' in task_name:
+                                self.order_task_finished = True
+                            if '邀请好友浇水' in task_name:
+                                self.print('已完成邀请好友浇水')
+                                self.invite_water_finished = True
 
         total = data['total']
         done = data['done']
@@ -668,7 +694,8 @@ class Dwnc:
         self.random_wait(1, 2, message=f'查找低价拍卖,第{page}页')
         res = self.get('/auction/getList', {'page': page})
         data = res.json()
-        self._cache[page] = data
+        if data.get('pageMax'):
+            self._cache[page] = data
         return data
 
     def buy(self, target=None, target_num=None, k=1.5, full=0.6, gold=None):
@@ -679,7 +706,7 @@ class Dwnc:
         have_buy_num = 0
         while page <= max_page or page == 1:
             data = self.buy_page_cache(page)
-            max_page = data['pageMax']
+            max_page = data.get('pageMax', 1)
             max_page = max_page if max_page < 40 else 40
             goods = data['list']
             for good in goods:
@@ -716,7 +743,29 @@ class Dwnc:
 
         return have_buy_num
 
-    def help(self, openid):
+    def help(self):
+        def get_help_id():
+            try:
+                with open('.dwnc.help', 'r') as f:
+                    return f.read()
+
+            except Exception as e:
+                return None
+
+        def export_help_id(i):
+            with open('.dwnc.help', 'w') as f:
+                f.write(i)
+
+        if self.day_times.get('land_water', 0) + 3 > self.config.get('DAY_WATER_MAX', 0):
+            return
+
+        openid = get_help_id()
+        if not self.invite_water_finished:
+            export_help_id(self.openid)
+
+        if not openid or openid == self.openid:
+            return
+
         self.get('/visit/lookUser', {'lookid': openid})
         self.random_wait(1, 2)
         res = self.get('/visit/lookFarm', {'lookid': openid})
@@ -730,6 +779,7 @@ class Dwnc:
 
         random.shuffle(water_land_ids)
 
+        water_times = 0
         for land in water_land_ids:
             if self.day_times.get('land_water', 0) < self.config.get('DAY_WATER_MAX', 20):
                 self.random_wait(0.1, 1, '浇水一次')
@@ -739,6 +789,9 @@ class Dwnc:
                 except Exception as e:
                     pprint(res.json())
                 self.day_times['land_water'] = self.day_times['land_water'] + 1
+                water_times += 1
+                if water_times >= 3:
+                    break
 
         random.shuffle(water_land_ids)
 
@@ -849,7 +902,7 @@ class Dwnc:
         thief_id = str(thiefs.pop())
         need_num = self.thief_info[thief_id]["hp_max"] * 3 - self.warehouse.get('1', {}).get("num", 0)
 
-        for k in [1, 2, 3]:
+        for k in [3]:
             if need_num > 0:
                 need_num -= self.buy('1', need_num, k=k, full=1, gold=2000)
 
@@ -880,21 +933,24 @@ if __name__ == '__main__':
         return data
 
     # accounts = "openid=xxx;sessid=xxx;&openid=xxx;&sessid=xxx;"
-    accounts = os.getenv('DWNC_AUTH')
+    accounts = os.getenv('DWNC_AUTH', '')
     if not accounts:
         print('请设置环境变量DWNC_AUTH', flush=True)
+    print(accounts, flush=True)
 
     # ua 【非必填】
     # ua = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.7(0x1800072d) NetType/WIFI Language/zh_CN"
     ua = os.getenv('DWNC_UA')
 
     # version = "1.1.9"
-    version = os.getenv('DWNC_VERSION')
+    version = os.getenv('DWNC_VERSION', '1.2.1')
     if ua:
         print(f'DWNC_UA:{ua}', flush=True)
     if version:
-        Dwnc.VERSION = version if version else '1.2.0'
+        Dwnc.VERSION = version
         print(f'DWNC_VERSION:{version}', flush=True)
+
+    end_time_hour = int(os.getenv('DWNC_ENDTIME_HOUR', 22))
 
     accounts = [parse(account) for account in accounts.split('&') if account]
     accounts = [Dwnc(**account, ua=ua) for account in accounts]
@@ -903,12 +959,8 @@ if __name__ == '__main__':
     while True:
         for dwnc in accounts:
             try:
-                print(f'---------------当前账号: {dwnc.account}------------------')
+                print(f'-------当前账号: {dwnc.account}({dwnc.character})-------')
                 dwnc.login()
-                if last and not dwnc.is_help:
-                    if last.openid != dwnc.openid:
-                        dwnc.help(last.openid)
-                        dwnc.is_help = True
                 dwnc.get_gold()
                 dwnc.thief_win()
                 # dwnc.buy()
@@ -918,11 +970,11 @@ if __name__ == '__main__':
                 dwnc.check_cash()
                 dwnc.check_sign()
                 dwnc.check_open()
-                # dwnc.check_open_land()
                 dwnc.check_level()
-                dwnc.check_order()
                 dwnc.check_daily()
+                dwnc.check_order()
                 dwnc.check_task_main()
+                dwnc.help()
                 for _ in range(random.randint(1, 3)):
                     status = dwnc.check_worker()
                     if status:
@@ -938,9 +990,13 @@ if __name__ == '__main__':
                 print('-------------------------------------------------\n\n\n\n')
             except Exception as e:
                 print(e, flush=True)
-        if datetime.datetime.now().hour >= 22:
+        if datetime.datetime.now().hour >= end_time_hour:
             break
 
-        VERSION = os.getenv('DWNC_VERSION') if os.getenv('DWNC_VERSION') else '1.2.0'
-        Dwnc.VERSION = VERSION
-        Dwnc.random_wait(200, 900, message='休息一会儿～～～～')
+        end_time_hour = int(os.getenv('DWNC_ENDTIME_HOUR', 22))
+        Dwnc.VERSION = os.getenv('DWNC_VERSION', '1.2.1')
+        if last:
+            if last.character == 'Tomato Tycoon':
+                Dwnc.random_wait(100, 300, message='休息一会儿～～～～')
+        else:
+            Dwnc.random_wait(200, 600, message='休息一会儿～～～～')
