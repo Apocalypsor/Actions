@@ -57,7 +57,7 @@ jobs:
       - name: Github ➡ Github
         id: microsoft-365-admin-update
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/6mb/Microsoft-365-Admin master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Microsoft-365-Admin keep
           cat /tmp/update > /dev/null && mv /tmp/dest_repo $RUNNER_DIR || echo "::set-output name=status::updated"
@@ -91,7 +91,7 @@ jobs:
       - name: Github ➡ Github
         id: jd-panel-update
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/whyour/qinglong master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-panel keep
           cat /tmp/update > /dev/null && mv /tmp/dest_repo $RUNNER_DIR || echo "::set-output name=status::updated"
@@ -125,7 +125,7 @@ jobs:
       - name: Github ➡ Github
         id: jd-cookie-update
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/scjtqs/jd_cookie master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JD-Coookie keep
           cat /tmp/update > /dev/null && mv /tmp/dest_repo $RUNNER_DIR || echo "::set-output name=status::updated"
@@ -161,81 +161,81 @@ jobs:
           node-version: 'lts/*'
       - name: Bot
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/SuMaiKaDe/bot main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-bot
       - name: JDHelloWorld
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/JDHelloWorld/jd_scripts main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jd-scripts ts2js
       - name: hundun
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/whyour/hundun master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/hundun
       - name: ZCY01
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/ZCY01/daily_scripts main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/ZCY01
       - name: yangtingxiao
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/yangtingxiao/QuantumultX master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/yangtingxiao
       - name: JDDJ
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/passerby-b/JDDJ main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JDDJ
       - name: longzhuzhu
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/longzhuzhu/nianyu main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/longzhuzhu
       - name: Ariszy
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/Ariszy/Private-Script master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Ariszy
       - name: moposmall
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/moposmall/Script main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/moposmall
       - name: pxylen
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/pxylen/dog_jd master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/pxylen
       - name: ztxtop
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/ztxtop/x main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/ztxtop
       - name: airacg
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/airacg/jd_task main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/airacg
       - name: JD_Diy
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/chiupam/JD_Diy master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/JD-Diy
       - name: Sunert
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/Sunert/Script master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Sunert
       - name: curtinlv
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/curtinlv/JD-Script main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/curtinlv
       - name: Tsukasa007
         run: |
-          bash Scripts/sync.sh \
+          bash Scripts/Sync.sh \
             https://github.com/Tsukasa007/my_script master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Tsukasa007
