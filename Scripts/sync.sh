@@ -50,13 +50,9 @@ if [ -d "/tmp/source_repo" ]; then
         if [ "$ts_exist" ]
         then
             echo "Converting Typescript files ..."
-            [ -f "package.json" ] && cp package.json /tmp/backup/ts-package.json
-            [ -f "package-lock.json" ] && cp package-lock.json /tmp/backup/ts-package-lock.json
-            npm install typescript
+            npm install --no-save typescript
             find ./ -name "*.ts" -exec ./node_modules/.bin/tsc {} >/dev/null 2>&1 \;
             rm -rf node_modules
-            [ -f "/tmp/backup/ts-package.json" ] && mv -f /tmp/backup/ts-package.json package.json
-            [ -f "/tmp/backup/ts-package-lock.json" ] && mv -f /tmp/backup/ts-package-lock.json package-lock.json
         fi
     fi
     
