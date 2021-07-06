@@ -52,8 +52,8 @@ if [ -d "/tmp/source_repo" ]; then
             echo "Converting Typescript files ..."
             [ -f "package.json" ] && cp package.json /tmp/backup/ts-package.json
             [ -f "package-lock.json" ] && cp package-lock.json /tmp/backup/ts-package-lock.json
-            npm install typescript tsc-silent
-            find ./ -name "*.ts" -exec ./node_modules/.bin/tsc-silent --suppress @ {} \;
+            npm install typescript
+            find ./ -name "*.ts" -exec ./node_modules/.bin/tsc {} 2>/dev/null \;
             rm -rf node_modules
             [ -f "/tmp/backup/ts-package.json" ] && mv -f /tmp/backup/ts-package.json package.json
             [ -f "/tmp/backup/ts-package-lock.json" ] && mv -f /tmp/backup/ts-package-lock.json package-lock.json
