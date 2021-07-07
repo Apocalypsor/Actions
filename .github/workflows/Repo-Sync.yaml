@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   
   push:
-    branches:    
+    branches:
       - 'master'
     paths:
       - '.github/workflows/Repo-Sync.yaml'
@@ -242,3 +242,8 @@ jobs:
           bash Scripts/Sync.sh \
             https://github.com/Tsukasa007/my_script master \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/Tsukasa007
+      - name: jiulan
+        run: |
+          bash Scripts/Sync.sh \
+            https://github.com/jiulan/platypus main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jiulan
