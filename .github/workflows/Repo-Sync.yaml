@@ -247,3 +247,19 @@ jobs:
           bash Scripts/Sync.sh \
             https://github.com/jiulan/platypus main \
             https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/jiulan
+      - name: star261
+        run: |
+          bash Scripts/Sync.sh \
+            https://github.com/star261/jd main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/star261
+      - name: smiek2221
+        run: |
+          bash Scripts/Sync.sh \
+            https://github.com/smiek2221/scripts master \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/smiek2221
+      - name: cdle
+        run: |
+          bash Scripts/Sync.sh \
+            https://github.com/cdle/jd_study main \
+            https://${{ github.repository_owner }}:${{ secrets.REPO_TOKEN }}@github.com/DovFork/cdle
+
