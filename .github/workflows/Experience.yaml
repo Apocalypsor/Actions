@@ -122,34 +122,6 @@ jobs:
         if: steps.pojie_experience.outputs.status == 'Error'
         run: python Notify.py '吾爱破解'
 
-  euserv:
-    name: EUserv Extend
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Clone
-        run: git clone --depth 1 https://github.com/CokeMine/EUserv_extend Experience
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Install dependencies
-        run: python -m pip install --upgrade requests beautifulsoup4
-      - name: EUserv Extend
-        id: euserv_extend
-        env:
-          USERNAME: ${{ secrets.EUSERV_USERNAME }}
-          PASSWORD: ${{ secrets.EUSERV_PASSWORD }}
-        run: |
-          python Experience/main.py > msg && cat msg
-          [[ $(grep '登陆失败' msg) || $(grep 'Error' msg) ]] && echo "::set-output name=status::Error" || true
-      - uses: actions/checkout@v2
-        if: steps.euserv_extend.outputs.status == 'Error'
-      - name: Notify
-        if: steps.euserv_extend.outputs.status == 'Error'
-        run: python Notify.py 'EUserv续期'
-
   freenom:
     runs-on: ubuntu-latest
     name: Freenom Extend
