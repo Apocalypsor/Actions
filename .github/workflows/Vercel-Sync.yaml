@@ -261,6 +261,7 @@ jobs:
 
   ariang:
     runs-on: ubuntu-latest
+    name: AriaNg
     env:
       project: Ariang
     steps:
