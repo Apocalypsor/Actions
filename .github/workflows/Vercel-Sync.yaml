@@ -280,6 +280,15 @@ jobs:
           [[ $result ]] && echo "VER=$VER" >> $GITHUB_ENV || true
           [[ $result ]] && curl -sSL https://apix.vercel.app/github/mayswind/AriaNg/AriaNg -o /tmp/tmp.zip && unzip -n /tmp/tmp.zip -d ./AriaNg || echo "Download failed!"
           [[ $result ]] && echo "::set-output name=status::proceed" || echo "Updated!"
+      - name: Deploy to GitHub Pages
+        if: steps.ariang.outputs.status == 'proceed'
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          repo: Apocalypsor/Aria2-Web
+          target_branch: main
+          build_dir: ./AriaNg/
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       - name: Github ➡ FTP
         if: steps.ariang.outputs.status == 'proceed'
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
