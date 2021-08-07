@@ -38,6 +38,38 @@ jobs:
         run: |
           [ $BYZH_FAIL ] && python Notify.py '不移之火'
           [ $HOSTLOC_FAIL ] && python Notify.py 'Hostloc'
+  
+  epic_free_games:
+    name: Epic Claimer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep Random Time
+        run: sleep $(shuf -i 10-60 -n 1)
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
+      - name: Clone
+        run: git clone --depth 1 https://github.com/Revadike/epicgames-freebies-claimer Experience
+      - name: Experience
+        id: epic_experience
+        env:
+          EPIC_AUTH: ${{ secrets.EPIC_AUTH }}
+        run: |
+          cd Experience && npm install
+          echo $EPIC_AUTH > device_auths.json
+          sed -i 's/"loop": true/"loop": false/g' config.json
+          npm start || echo "::set-output name=status::Error"
+      - uses: actions/checkout@v2
+        if: steps.epic_experience.outputs.status == 'Error'
+      - name: Set Python
+        if: steps.epic_experience.outputs.status == 'Error'
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Notify
+        if: steps.epic_experience.outputs.status == 'Error'
+        run: pip install requests && python Notify.py 'Epic'
 
   tieba_experience:
     name: TieBa Experience
