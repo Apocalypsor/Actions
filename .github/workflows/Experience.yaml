@@ -58,7 +58,7 @@ jobs:
         run: |
           cd Experience && npm install
           echo $EPIC_AUTH > device_auths.json
-          sed -i 's/"loop": true/"loop": false/g' config.json
+          sed -i 's/"loop": true/"loop": false/g' data/config.json
           npm start || echo "::set-output name=status::Error"
       - uses: actions/checkout@v2
         if: steps.epic_experience.outputs.status == 'Error'
