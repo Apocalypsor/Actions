@@ -57,7 +57,7 @@ jobs:
           EPIC_AUTH: ${{ secrets.EPIC_AUTH }}
         run: |
           cd Experience && npm install
-          echo $EPIC_AUTH > device_auths.json
+          echo $EPIC_AUTH > data/device_auths.json
           sed -i 's/"loop": true/"loop": false/g' data/config.json
           npm start || echo "::set-output name=status::Error"
       - uses: actions/checkout@v2
