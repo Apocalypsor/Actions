@@ -153,29 +153,3 @@ jobs:
       - name: Notify
         if: steps.pojie_experience.outputs.status == 'Error'
         run: python Notify.py '吾爱破解'
-
-  freenom:
-    runs-on: ubuntu-latest
-    name: Freenom Extend
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Clone
-        run: git clone --depth 1 https://github.com/luolongfei/freenom Experience
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.2'
-      - name: Setting
-        run: |
-          cd Experience && cp .env.example .env
-          sed -i "s/^FREENOM_USERNAME=.*$/FREENOM_USERNAME='${{ secrets.FREENOM_USERNAME }}'/" .env
-          sed -i "s/^FREENOM_PASSWORD=.*$/FREENOM_PASSWORD='${{ secrets.FREENOM_PASSWORD }}'/" .env
-          sed -i "s/^MAIL_ENABLE=.*$/MAIL_ENABLE=false/" .env
-          sed -i "s/^TELEGRAM_CHAT_ID=.*$/TELEGRAM_CHAT_ID='${{ secrets.TG_CHATID }}'/" .env
-          sed -i "s/^TELEGRAM_BOT_TOKEN=.*$/TELEGRAM_BOT_TOKEN='${{ secrets.TG_TOKEN }}'/" .env
-          sed -i "s/^TELEGRAM_BOT_ENABLE=.*$/TELEGRAM_BOT_ENABLE=true/" .env
-          sed -i "s/^NOTICE_FREQ=.*$/NOTICE_FREQ=0/" .env
-          sed -i "s/^ON_GITHUB_ACTIONS=.*$/ON_GITHUB_ACTIONS=true/" .env
-      - name: Run
-        run: cd Experience && php run
