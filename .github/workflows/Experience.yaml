@@ -161,7 +161,7 @@ jobs:
       - name: Sleep Random Time
         run: sleep $(shuf -i 10-60 -n 1)
       - name: Clone
-        run: git clone --depth 1 https://github.com/luolongfei/next-freenom Experience
+        run: git clone --depth 1 https://github.com/luolongfei/freenom Experience
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
