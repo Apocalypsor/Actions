@@ -205,7 +205,7 @@ jobs:
           repo: Apocalypsor/Aria2-Web
           target_branch: main
           build_dir: ./AriaNg/
-          fqdn: aria2w.ml
+          fqdn: aria2w.eu.org
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       - name: Github ➡ FTP
