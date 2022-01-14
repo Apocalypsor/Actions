@@ -50,6 +50,47 @@ jobs:
       - name: Update
         if: steps.watermark-deploy.outputs.preview-url && steps.watermark.outputs.status == 'proceed'
         run: python Vercel/update.py $project ${{ env.VER }}
+  
+  rsshub:
+    runs-on: ubuntu-latest
+    name: RSSHub on Vercel
+    env:
+      project: RSSHub
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: python -m pip install --upgrade pymongo dnspython
+      - name: Check Upstream
+        id: rsshub
+        run: |
+          VER=$(curl -s -N https://api.github.com/repos/DIYgod/RSSHub/commits | grep -o '[0-9a-z]\{40\}' | head -n 1)
+          result=$(python Vercel/check.py $project $VER)
+          [[ $result ]] && echo "VER=$VER" >> $GITHUB_ENV || true
+          [[ $result ]] && echo "::set-output name=status::proceed" || echo "Updated!"
+      - name: Update
+        if: steps.rsshub.outputs.status == 'proceed'
+        run: |
+          git clone --depth 1 https://github.com/DIYgod/RSSHub vercel
+          cd vercel && git reset --hard ${{ env.VER }}
+      - name: Vercel Deploy
+        id: rsshub-deploy
+        if: steps.rsshub.outputs.status == 'proceed'
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-comment: false
+          vercel-args: '--prod'
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-project-id: 'prj_WjePlOAliVkvd0gUV4O2EliHqLvG'
+          working-directory: ./vercel
+      - name: Update
+        if: steps.rsshub-deploy.outputs.preview-url && steps.rsshub.outputs.status == 'proceed'
+        run: python Vercel/update.py $project ${{ env.VER }}
 
   unlock-music:
     runs-on: ubuntu-latest
