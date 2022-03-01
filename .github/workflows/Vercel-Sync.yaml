@@ -92,48 +92,6 @@ jobs:
         if: steps.rsshub-deploy.outputs.preview-url && steps.rsshub.outputs.status == 'proceed'
         run: python Vercel/update.py $project ${{ env.VER }}
 
-  unlock-music:
-    runs-on: ubuntu-latest
-    name: Unlock-Music on Vercel
-    env:
-      project: UnlockMusic
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Install dependencies
-        run: python -m pip install --upgrade pymongo dnspython
-      - name: Check Upstream
-        id: unlock-music
-        run: |
-          VER=$(curl -s -N https://api.github.com/repos/unlock-music/unlock-music/commits/gh-pages | grep -o '[0-9a-z]\{40\}' | head -n 1)
-          result=$(python Vercel/check.py $project $VER)
-          [[ $result ]] && echo "VER=$VER" >> $GITHUB_ENV || true
-          [[ $result ]] && echo "::set-output name=status::proceed" || echo "Updated!"
-      - name: Update
-        if: steps.unlock-music.outputs.status == 'proceed'
-        run: |
-          git clone --depth 1 -b gh-pages https://github.com/unlock-music/unlock-music vercel
-          cd vercel && git reset --hard ${{ env.VER }}
-      - name: Vercel Deploy
-        id: unlock-music-deploy
-        if: steps.unlock-music.outputs.status == 'proceed'
-        uses: amondnet/vercel-action@v20
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          github-comment: false
-          vercel-args: '--prod'
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
-          vercel-project-id: 'QmRPQNeqTWqzy71XZmp4M1W4Upe6k1fwMMy9hiT5WkP44m'
-          working-directory: ./vercel
-      - name: Update
-        if: steps.unlock-music-deploy.outputs.preview-url && steps.unlock-music.outputs.status == 'proceed'
-        run:
-          python Vercel/update.py $project ${{ env.VER }}
-
   sub-web:
     runs-on: ubuntu-latest
     name: Sub-Web on Vercel
