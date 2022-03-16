@@ -244,7 +244,7 @@ jobs:
       - name: Update
         if: steps.unlock-music.outputs.status == 'proceed'
         run: |
-          git clone --depth 1 -b gh-pages https://git.unlock-music.dev/um/web vercel
+          git clone --depth 1 -b master https://git.unlock-music.dev/um/web vercel
           cd vercel && git reset --hard ${{ env.VER }}
       - name: Vercel Deploy
         id: unlock-music-deploy
