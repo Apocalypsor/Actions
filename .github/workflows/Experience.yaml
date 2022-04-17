@@ -39,6 +39,7 @@ jobs:
           FLEXGET_CONFIG_URL: ${{ secrets.FLEXGET_CONFIG_URL }}
         run: |
           mkdir flexget && cd flexget
+          pip install fuzzywuzzy
           curl -sSL \
             -H "Authorization: token $REPO_TOKEN" \
             $FLEXGET_CONFIG_URL \
@@ -79,34 +80,6 @@ jobs:
       - name: Notify
         if: steps.tieba_experience.outputs.status == 'Error'
         run: pip install requests && python Notify.py '贴吧'
-  
-  cloud189:
-    name: Cloud189 Experience
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Set Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Install dependencies
-        run: |
-          git clone --depth 1 https://github.com/mengshouer/CheckinBox Experience
-          pip3 install -r Experience/requirements.txt
-      - name: Experience
-        id: cloud189_experience
-        env:
-          username: ${{ secrets.CLOUD189_USER }}
-          password: ${{ secrets.CLOUD189_PW }}
-        run: |
-          python Experience/Cloud189Checkin/C189CheckinForSCF.py > msg && cat msg
-          [[ $(grep '出错' msg) ]] && echo "::set-output name=status::Error" || true
-      - uses: actions/checkout@v2
-        if: steps.cloud189_experience.outputs.status == 'Error'
-      - name: Notify
-        if: steps.cloud189_experience.outputs.status == 'Error'
-        run: python Notify.py '天翼云盘'
 
   pojie:
     name: 52Pojie Experience
