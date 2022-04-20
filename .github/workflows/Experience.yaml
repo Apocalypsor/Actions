@@ -81,33 +81,6 @@ jobs:
         if: steps.tieba_experience.outputs.status == 'Error'
         run: pip install requests && python Notify.py '贴吧'
 
-  pojie:
-    name: 52Pojie Experience
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sleep Random Time
-        run: sleep $(shuf -i 10-60 -n 1)
-      - name: Set Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Install dependencies
-        run: |
-          git clone --depth 1 https://github.com/mengshouer/CheckinBox Experience
-          pip3 install -r Experience/requirements.txt
-      - name: Experience
-        id: pojie_experience
-        env:
-          cookie_52pj: ${{ secrets.PJ_COOKIE }}
-        run: |
-          python Experience/Checkin52pj/Checkin52pjForSCF.py > msg && cat msg
-          [[ $(grep '失效|出错' msg) ]] && echo "::set-output name=status::Error" || true
-      - uses: actions/checkout@v2
-        if: steps.pojie_experience.outputs.status == 'Error'
-      - name: Notify
-        if: steps.pojie_experience.outputs.status == 'Error'
-        run: python Notify.py '吾爱破解'
-
   freenom:
     runs-on: ubuntu-latest
     name: Freenom Extend
