@@ -39,7 +39,7 @@ jobs:
           FLEXGET_CONFIG_URL: ${{ secrets.FLEXGET_CONFIG_URL }}
         run: |
           mkdir flexget && cd flexget
-          pip install fuzzywuzzy
+          pip install fuzzywuzzy baidu-aip Pillow
           curl -sSL \
             -H "Authorization: token $REPO_TOKEN" \
             $FLEXGET_CONFIG_URL \
