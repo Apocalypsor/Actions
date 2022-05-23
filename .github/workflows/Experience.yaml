@@ -45,6 +45,7 @@ jobs:
             $FLEXGET_CONFIG_URL \
             > config.yaml
           git clone https://github.com/madwind/flexget_qbittorrent_mod plugins
+          cd plugins && git reset --hard 5ba32c2828c1fae286c44cdd54e48e22f5d9c06f && cd ..
           flexget -c config.yaml execute --task sign_in || echo "FLEXGET_FAIL=true" >> $GITHUB_ENV
       - name: Notify
         if: env.BYZH_FAIL || env.HOSTLOC_FAIL || env.FLEXGET_FAIL
