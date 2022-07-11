@@ -24,10 +24,6 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: python -m pip install --upgrade requests pyaes flexget Pillow matplotlib pandas chardet python-telegram-bot pyppeteer pyppeteer-stealth colorama
-      - name: BYZH Experience
-        env:
-          COOKIE: ${{ secrets.BYZH_COOKIE }}
-        run: python Experience/buyizhihuo.py || echo "BYZH_FAIL=true" >> $GITHUB_ENV
       - name: Hostloc Experience
         env:
           HOSTLOC_USERNAME: ${{ secrets.HOSTLOC_USERNAME }}
@@ -48,9 +44,8 @@ jobs:
           cd plugins && git reset --hard 5ba32c2828c1fae286c44cdd54e48e22f5d9c06f && cd ..
           flexget -c config.yaml execute --task sign_in || echo "FLEXGET_FAIL=true" >> $GITHUB_ENV
       - name: Notify
-        if: env.BYZH_FAIL || env.HOSTLOC_FAIL || env.FLEXGET_FAIL
+        if: env.HOSTLOC_FAIL || env.FLEXGET_FAIL
         run: |
-          [ $BYZH_FAIL ] && python Notify.py '不移之火'
           [ $HOSTLOC_FAIL ] && python Notify.py 'Hostloc'
           [ $FLEXGET_FAIL ] && python Notify.py 'Flexget'
 
