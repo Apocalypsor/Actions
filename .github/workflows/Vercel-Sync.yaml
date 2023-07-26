@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js
@@ -23,3 +25,11 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: yarn run vercel-update
+      - name: Push
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update Vercel deployment
+          skip_dirty_check: false
+          commit_user_name: Action Bot
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_author: Action <actions@github.com>
