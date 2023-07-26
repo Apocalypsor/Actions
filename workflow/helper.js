@@ -6,7 +6,7 @@ const cliProgress = require("cli-progress");
 const getAllRepos = async (octokit) => {
     const repos = [];
 
-    for (let page = 1; ; page++) {
+    for (let page = 0; ; page++) {
         const requestedRepos = await octokit.rest.repos.listForUser({
             username: config.user,
             per_page: 100,
@@ -34,7 +34,7 @@ const getAllRepos = async (octokit) => {
 
 const deleteWorkflowRuns = async (octokit, repo) => {
     const actions = [];
-    for (let page = 1; ; page++) {
+    for (let page = 0; ; page++) {
         const requestedActions =
             await octokit.rest.actions.listWorkflowRunsForRepo({
                 owner: repo.owner,
