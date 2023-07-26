@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "noImplicitAny": false,
+        "moduleResolution": "node",
+        "allowJs": true,
+        "checkJs": true,
+        "paths": {
+            "@utils": [
+                "./utils"
+            ],
+            "@vercelUtil/*": [
+                "./vercel/*"
+            ],
+            "@config/*": [
+                "./config/*"
+            ],
+            "@store/*": [
+                "./.github/*"
+            ],
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

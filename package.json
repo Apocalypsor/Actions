@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "vercel-update": "node ./vercel/update.js"
+  },
+  "dependencies": {
+    "@vercel/client": "^12.6.5",
+    "dotenv": "^16.3.1",
+    "module-alias": "^2.2.3",
+    "simple-git": "^3.19.1"
+  },
+  "_moduleAliases": {
+    "@utils": "./utils",
+    "@config": "./config",
+    "@vercelUtil": "./vercel",
+    "@store": "./.github"
+  },
+  "license": "MIT"
+}
