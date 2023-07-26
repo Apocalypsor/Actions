@@ -13,6 +13,9 @@
             "@vercelUtil/*": [
                 "./vercel/*"
             ],
+            "@workflowUtil/*": [
+                "./workflow/*"
+            ],
             "@config/*": [
                 "./config/*"
             ],
