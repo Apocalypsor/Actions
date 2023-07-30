@@ -1,4 +1,6 @@
 module.exports = {
     user: "Apocalypsor",
-    exclude: [],
+    exclude: [
+        "Apocalypsor/Formatted-RSS-to-Telegram",
+    ],
 };
