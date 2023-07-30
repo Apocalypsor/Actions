@@ -18,5 +18,11 @@ module.exports = {
             path: "./",
             dest: "unlock-music",
         },
+        {
+            repo: "https://github.com/CorentinTh/it-tools",
+            branch: "main",
+            path: "./",
+            dest: "it-tools",
+        },
     ],
 };
