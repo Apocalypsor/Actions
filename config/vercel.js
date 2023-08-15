@@ -24,5 +24,11 @@ module.exports = {
             path: "./",
             dest: "it-tools",
         },
+        {
+            repo: "https://github.com/geekdada/yasd",
+            branch: "v2",
+            path: "./",
+            dest: "surge",
+        },
     ],
 };
