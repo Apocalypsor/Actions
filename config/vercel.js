@@ -26,7 +26,7 @@ module.exports = {
         },
         {
             repo: "https://github.com/geekdada/yasd",
-            branch: "v2",
+            branch: "master",
             path: "./",
             dest: "surge",
         },
