@@ -13,12 +13,6 @@ module.exports = {
             dest: "dnsflare",
         },
         {
-            repo: "https://git.unlock-music.dev/um/web",
-            branch: "master",
-            path: "./",
-            dest: "unlock-music",
-        },
-        {
             repo: "https://github.com/CorentinTh/it-tools",
             branch: "main",
             path: "./",
