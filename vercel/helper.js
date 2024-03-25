@@ -1,10 +1,10 @@
 const { createDeployment } = require("@vercel/client");
 
-const deploy = async (repoPath, projectName) => {
+const deploy = async (repoPath, projectName, token) => {
     let deployment;
     for await (const event of createDeployment(
         {
-            token: process.env.VERCEL_TOKEN,
+            token: process.env[token],
             path: repoPath,
             apiUrl: "https://api.vercel.com",
         },

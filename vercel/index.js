@@ -40,7 +40,8 @@ const { deploy } = require("@vercelUtil/helper");
 
             const deployment = await deploy(
                 path.join(gitRepoPath, c.path),
-                c.dest
+                c.dest,
+                c.token || "VERCEL_TOKEN",
             );
             if (deployment?.readyState === "READY") {
                 console.log(`Deployed ${c.dest} successfully!`);
