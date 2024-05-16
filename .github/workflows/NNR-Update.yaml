@@ -1,4 +1,4 @@
-name: NNR Sync
+name: NNR Update
 
 on:
   workflow_dispatch:
