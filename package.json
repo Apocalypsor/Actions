@@ -1,22 +1,26 @@
 {
-  "scripts": {
-    "vercel-update": "node vercel",
-    "workflow-clean": "node workflow"
-  },
-  "dependencies": {
-    "@octokit/rest": "^20.0.1",
-    "@vercel/client": "^12.6.5",
-    "cli-progress": "^3.12.0",
-    "dotenv": "^16.3.1",
-    "module-alias": "^2.2.3",
-    "simple-git": "^3.19.1"
-  },
-  "_moduleAliases": {
-    "@utils": "./utils",
-    "@config": "./config",
-    "@vercelUtil": "./vercel",
-    "@workflowUtil": "./workflow",
-    "@store": "./.github"
-  },
-  "license": "MIT"
+    "scripts": {
+        "vercel-update": "node vercel",
+        "workflow-clean": "node workflow",
+        "nnr-update": "node nnr"
+    },
+    "dependencies": {
+        "@octokit/rest": "^20.0.1",
+        "@vercel/client": "^12.6.5",
+        "axios": "^1.6.8",
+        "cli-progress": "^3.12.0",
+        "dotenv": "^16.3.1",
+        "lodash": "^4.17.21",
+        "module-alias": "^2.2.3",
+        "simple-git": "^3.19.1"
+    },
+    "_moduleAliases": {
+        "@helpers": "./helpers",
+        "@config": "./config",
+        "@nnrUtil": "./nnr",
+        "@vercelUtil": "./vercel",
+        "@workflowUtil": "./workflow",
+        "@store": "./.github"
+    },
+    "license": "MIT"
 }
