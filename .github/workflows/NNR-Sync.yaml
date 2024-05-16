@@ -1,4 +1,4 @@
-name: Vercel Sync
+name: NNR Sync
 
 on:
   workflow_dispatch:
