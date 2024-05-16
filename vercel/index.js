@@ -8,7 +8,7 @@ const {
     createPathIfNotExists,
     deletePathIfExists,
     writeFile,
-} = require("helpers");
+} = require("@helpers");
 const config = require("@config/vercel");
 const store = require("@store/vercel/ver.json");
 const { deploy } = require("@vercelUtil/helper");
