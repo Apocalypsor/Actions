@@ -23,5 +23,5 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Clean
         env:
-          WORKFLOW_TOKEN: ${{ secrets.REPO_TOKEN }}
+          WORKFLOW_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn run workflow-clean
