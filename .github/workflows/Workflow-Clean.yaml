@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      actions: write
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js
@@ -23,5 +21,5 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Clean
         env:
-          WORKFLOW_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WORKFLOW_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: yarn run workflow-clean
