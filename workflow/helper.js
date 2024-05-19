@@ -9,7 +9,6 @@ const getAllRepos = async (octokit) => {
     for (let page = 0; ; page++) {
         const requestedRepos = await octokit.rest.repos.listForUser({
             username: config.user,
-            type: 'all',
             per_page: 100,
             page: page,
         });
