@@ -24,11 +24,5 @@ module.exports = {
             path: "./",
             dest: "surge",
         },
-        {
-            repo: "https://github.com/wanglin2/mind-map",
-            branch: "main",
-            path: "./",
-            dest: "mind-map",
-        },
     ],
 };
