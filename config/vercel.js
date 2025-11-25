@@ -24,5 +24,11 @@ module.exports = {
             path: "./",
             dest: "surge",
         },
+        {
+            repo: "https://github.com/huangxd-/danmu_api",
+            branch: "main",
+            path: "./",
+            dest: "danmu-api",
+        },
     ],
 };
