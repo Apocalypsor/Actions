@@ -1,23 +1,32 @@
 require("module-alias/register");
 
 const config = require("@config/workflow");
+const { default: axios } = require("axios");
 const cliProgress = require("cli-progress");
 
 const getAllRepos = async (octokit) => {
     const repos = [];
 
-    for (let page = 0; ; page++) {
-        const requestedRepos = await octokit.rest.repos.listForUser({
-            username: config.user,
-            per_page: 100,
-            page: page,
-        });
+    for (let page = 1; ; page++) {
+        const requestedRepos = await axios.get("https://api.github.com/user/repos",
+            {
+                headers: {
+                    Authorization: `token ${process.env.WORKFLOW_TOKEN}`,
+                    Accept: "application/vnd.github.v3+json"
+                },
+                params: {
+                    per_page: 100,
+                    page: page,
+                },
+            }
+        );
 
         if (requestedRepos.data.length === 0) break;
         repos.push(
             ...requestedRepos.data
                 .filter(
                     (repo) =>
+                        repo.full_name.startsWith(config.user) &&
                         !repo.archived &&
                         !repo.disabled &&
                         !config.exclude.includes(repo.name)

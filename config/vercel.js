@@ -25,10 +25,10 @@ module.exports = {
             dest: "surge",
         },
         {
-            repo: "https://github.com/wanglin2/mind-map",
+            repo: "https://github.com/huangxd-/danmu_api",
             branch: "main",
             path: "./",
-            dest: "mind-map",
+            dest: "danmu-api",
         },
     ],
 };
