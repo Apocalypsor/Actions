@@ -19,8 +19,8 @@ jobs:
         run: |
           VERSION=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | jq -r .tag_name)
           wget -q "https://github.com/gitleaks/gitleaks/releases/download/${VERSION}/gitleaks_${VERSION#v}_linux_x64.tar.gz"
-          tar -zxf "gitleaks_${VERSION#v}_linux_x64.tar.gz"
-          sudo mv gitleaks /usr/local/bin/
+          tar -zxf "gitleaks_${VERSION#v}_linux_x64.tar.gz" -C /tmp
+          sudo mv /tmp/gitleaks /usr/local/bin/
       - name: Scan
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
