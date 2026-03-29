@@ -4,13 +4,13 @@ import {
   createPathIfNotExists,
   deletePathIfExists,
   generateRandomString,
-  writeFile,
 } from "@helpers";
 import { deploy } from "@vercel/helper";
 import { simpleGit } from "simple-git";
 
-const storeFile = path.resolve(import.meta.dir, "../.github/vercel/ver.json");
-const store: Record<string, string> = await Bun.file(storeFile).json();
+const store: Record<string, string> = JSON.parse(
+  process.env.VERCEL_STATE || "{}",
+);
 
 const gitPath = path.join("/tmp", "git", generateRandomString());
 if (!(await createPathIfNotExists(gitPath))) {
@@ -49,6 +49,6 @@ for (const c of projects) {
 
 await deletePathIfExists(gitPath);
 
-const stateString = JSON.stringify(store, null, 2);
+const stateString = JSON.stringify(store);
 console.log(`Writing state: ${stateString}`);
-await writeFile(storeFile, store);
+await Bun.write("/tmp/vercel-state.json", stateString);

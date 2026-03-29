@@ -6,8 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false,
-    "includes": ["**", "!.github/vercel"]
+    "ignoreUnknown": false
   },
   "formatter": {
     "enabled": true,

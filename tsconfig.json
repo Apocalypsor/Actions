@@ -12,8 +12,7 @@
       "@helpers": ["./helpers/index.ts"],
       "@config/*": ["./config/*"],
       "@vercel/*": ["./vercel/*"],
-      "@workflow/*": ["./workflow/*"],
-      "@store/*": ["./.github/*"]
+      "@workflow/*": ["./workflow/*"]
     },
     "types": ["bun-types"]
   },

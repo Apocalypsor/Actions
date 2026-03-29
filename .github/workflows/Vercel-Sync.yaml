@@ -10,24 +10,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      actions: write
     steps:
       - uses: actions/checkout@v6
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
       - name: Install dependencies
         run: bun install --frozen-lockfile
+      - name: Read state
+        run: echo "VERCEL_STATE=$(gh variable get VERCEL_STATE 2>/dev/null || echo '{}')" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Sync
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_STATE: ${{ env.VERCEL_STATE }}
         run: bun run vercel-update
-      - name: Push
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Save state
+        run: gh variable set VERCEL_STATE --body "$(cat /tmp/vercel-state.json)"
         env:
-          HUSKY: "0"
-        with:
-          commit_message: Update Vercel deployment
-          skip_dirty_check: false
-          commit_user_name: Action Bot
-          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
-          commit_author: Action <actions@github.com>
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
