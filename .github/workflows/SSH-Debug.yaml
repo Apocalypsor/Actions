@@ -8,7 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Start SSH via tmate
-        uses: P3TERX/ssh2actions@main
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TG_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TG_CHATID }}
+        uses: mxschmitt/action-tmate@v3
