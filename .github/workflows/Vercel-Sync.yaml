@@ -23,6 +23,8 @@ jobs:
         run: bun run vercel-update
       - name: Push
         uses: stefanzweifel/git-auto-commit-action@v5
+        env:
+          HUSKY: "0"
         with:
           commit_message: Update Vercel deployment
           skip_dirty_check: false
