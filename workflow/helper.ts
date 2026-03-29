@@ -76,11 +76,13 @@ export const deleteWorkflowRuns = async (
 
     if (requestedActions.data.workflow_runs.length === 0) break;
     actions.push(
-      ...requestedActions.data.workflow_runs.map((run) => ({
-        id: run.id,
-        name: repo.name,
-        owner: repo.owner,
-      })),
+      ...requestedActions.data.workflow_runs
+        .filter((run) => run.status === "completed")
+        .map((run) => ({
+          id: run.id,
+          name: repo.name,
+          owner: repo.owner,
+        })),
     );
   }
 
