@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      actions: write
     steps:
       - uses: actions/checkout@v6
       - name: Setup Bun
@@ -20,7 +18,7 @@ jobs:
       - name: Read state
         run: echo "VERCEL_STATE=$(gh variable get VERCEL_STATE 2>/dev/null || echo '{}')" >> $GITHUB_ENV
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ACTIONS_VAR_TOKEN }}
       - name: Sync
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -29,4 +27,4 @@ jobs:
       - name: Save state
         run: gh variable set VERCEL_STATE --body "$(cat /tmp/vercel-state.json)"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ACTIONS_VAR_TOKEN }}
