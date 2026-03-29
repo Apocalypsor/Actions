@@ -1,0 +1,35 @@
+name: Global Secrets Scan
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 0 * * 1"
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Install Gitleaks
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | jq -r .tag_name)
+          wget -q "https://github.com/gitleaks/gitleaks/releases/download/${VERSION}/gitleaks_${VERSION#v}_linux_x64.tar.gz"
+          tar -zxf "gitleaks_${VERSION#v}_linux_x64.tar.gz"
+          sudo mv gitleaks /usr/local/bin/
+      - name: Scan
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+          GITLEAKS_USER: Apocalypsor
+        run: bun run gitleaks-scan
+      - name: Upload Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-reports
+          path: reports/
+          if-no-files-found: ignore

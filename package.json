@@ -2,16 +2,17 @@
   "scripts": {
     "vercel-update": "bun run vercel/index.ts",
     "workflow-clean": "bun run workflow/index.ts",
+    "gitleaks-scan": "bun run gitleaks/index.ts",
     "check": "biome check",
     "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
   "dependencies": {
-    "@octokit/rest": "^20.0.1",
-    "@vercel/client": "^12.6.5",
-    "ky": "^1.8.1",
+    "@octokit/rest": "^20.1.2",
+    "@vercel/client": "^12.6.6",
+    "ky": "^1.14.3",
     "cli-progress": "^3.12.0",
-    "simple-git": "^3.32.3"
+    "simple-git": "^3.33.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.9",
