@@ -1,0 +1,40 @@
+export interface VercelProject {
+  repo: string;
+  branch: string;
+  path: string;
+  dest: string;
+  token?: string;
+}
+
+export const projects: VercelProject[] = [
+  {
+    repo: "https://github.com/walinejs/waline",
+    branch: "main",
+    path: "./example",
+    dest: "waline",
+  },
+  {
+    repo: "https://github.com/5aaee9/Dnsflare",
+    branch: "master",
+    path: "./",
+    dest: "dnsflare",
+  },
+  {
+    repo: "https://github.com/CorentinTh/it-tools",
+    branch: "main",
+    path: "./",
+    dest: "it-tools",
+  },
+  {
+    repo: "https://github.com/geekdada/yasd",
+    branch: "master",
+    path: "./",
+    dest: "surge",
+  },
+  {
+    repo: "https://github.com/huangxd-/danmu_api",
+    branch: "main",
+    path: "./",
+    dest: "danmu-api",
+  },
+];

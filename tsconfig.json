@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "paths": {
+      "@helpers": ["./helpers/index.ts"],
+      "@config/*": ["./config/*"],
+      "@vercel/*": ["./vercel/*"],
+      "@workflow/*": ["./workflow/*"],
+      "@store/*": ["./.github/*"]
+    },
+    "types": ["bun-types"]
+  },
+  "exclude": ["node_modules", "dist"]
+}
