@@ -81,13 +81,17 @@ for (let i = 0; i < repos.length; i++) {
       ["gitleaks", "detect", "--source", repoDir, "--report-path", reportPath],
       { stdout: "ignore", stderr: "ignore" },
     );
-    const exitCode = await proc.exited;
+    await proc.exited;
 
-    if (exitCode !== 0) {
-      leakedRepos.push(repo.name);
-    } else {
-      // Remove empty report
-      await deletePathIfExists(reportPath);
+    // Check report content instead of exit code
+    const reportFile = Bun.file(reportPath);
+    if (await reportFile.exists()) {
+      const content: unknown[] = await reportFile.json();
+      if (content.length > 0) {
+        leakedRepos.push(repo.name);
+      } else {
+        await deletePathIfExists(reportPath);
+      }
     }
   } catch (e) {
     console.error(`Failed to scan ${repo.name}: ${e}`);
