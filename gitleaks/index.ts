@@ -65,12 +65,10 @@ const reportDir = path.resolve("reports");
 await createPathIfNotExists(tmpDir);
 await createPathIfNotExists(reportDir);
 
-let leaksFound = false;
+const leakedRepos: string[] = [];
 
 for (let i = 0; i < repos.length; i++) {
   const repo = repos[i];
-  console.log(`[${i + 1}/${repos.length}] Scanning ${repo.name}...`);
-
   const repoDir = path.join(tmpDir, repo.name);
   const authUrl = repo.clone_url.replace("https://", `https://${token}@`);
 
@@ -80,22 +78,13 @@ for (let i = 0; i < repos.length; i++) {
 
     const reportPath = path.join(reportDir, `${repo.name}_report.json`);
     const proc = Bun.spawn(
-      [
-        "gitleaks",
-        "detect",
-        "--source",
-        repoDir,
-        "--report-path",
-        reportPath,
-        "-v",
-      ],
-      { stdout: "inherit", stderr: "inherit" },
+      ["gitleaks", "detect", "--source", repoDir, "--report-path", reportPath],
+      { stdout: "ignore", stderr: "ignore" },
     );
     const exitCode = await proc.exited;
 
     if (exitCode !== 0) {
-      console.log(`⚠ Found leaks in ${repo.name}`);
-      leaksFound = true;
+      leakedRepos.push(repo.name);
     }
   } catch (e) {
     console.error(`Failed to scan ${repo.name}: ${e}`);
@@ -106,8 +95,28 @@ for (let i = 0; i < repos.length; i++) {
 
 await deletePathIfExists(tmpDir);
 
-if (leaksFound) {
-  console.log(
-    "\nLeaks detected in one or more repos. Check reports for details.",
-  );
+// Write summary
+if (leakedRepos.length > 0) {
+  const summary = [
+    `Gitleaks Scan Summary - ${new Date().toISOString().split("T")[0]}`,
+    "",
+    `Scanned: ${repos.length} repos`,
+    `Leaks found in ${leakedRepos.length} repo(s):`,
+    "",
+    ...leakedRepos.map((name) => `  - ${name}`),
+    "",
+    "See attached reports for details.",
+  ].join("\n");
+
+  await Bun.write("/tmp/gitleaks-summary.txt", summary);
+  console.log(summary);
+} else {
+  console.log(`Scanned ${repos.length} repos, no leaks found.`);
+}
+
+// Set output for workflow
+const outputFile = process.env.GITHUB_OUTPUT;
+if (outputFile) {
+  const fs = await import("node:fs");
+  fs.appendFileSync(outputFile, `leaks_found=${leakedRepos.length > 0}\n`);
 }

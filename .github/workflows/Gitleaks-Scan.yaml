@@ -22,14 +22,22 @@ jobs:
           tar -zxf "gitleaks_${VERSION#v}_linux_x64.tar.gz" -C /tmp
           sudo mv /tmp/gitleaks /usr/local/bin/
       - name: Scan
+        id: scan
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
           GITLEAKS_USER: Apocalypsor
+          GITLEAKS_EXCLUDE: ${{ secrets.GITLEAKS_EXCLUDE }}
         run: bun run gitleaks-scan
-      - name: Upload Reports
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Send Email
+        if: steps.scan.outputs.leaks_found == 'true'
+        uses: dawidd6/action-send-mail@v3
         with:
-          name: gitleaks-reports
-          path: reports/
-          if-no-files-found: ignore
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Gitleaks: Secrets detected in your repos"
+          to: ${{ secrets.NOTIFY_EMAIL }}
+          from: ${{ secrets.SMTP_USERNAME }}
+          body: file:///tmp/gitleaks-summary.txt
+          attachments: reports/*.json
