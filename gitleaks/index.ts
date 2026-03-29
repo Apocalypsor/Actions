@@ -85,6 +85,9 @@ for (let i = 0; i < repos.length; i++) {
 
     if (exitCode !== 0) {
       leakedRepos.push(repo.name);
+    } else {
+      // Remove empty report
+      await deletePathIfExists(reportPath);
     }
   } catch (e) {
     console.error(`Failed to scan ${repo.name}: ${e}`);
@@ -110,6 +113,21 @@ if (leakedRepos.length > 0) {
 
   await Bun.write("/tmp/gitleaks-summary.txt", summary);
   console.log(summary);
+
+  // Zip reports
+  const zip = Bun.spawn(
+    [
+      "zip",
+      "-j",
+      "/tmp/gitleaks-reports.zip",
+      ...leakedRepos.map((name) => path.join(reportDir, `${name}_report.json`)),
+    ],
+    {
+      stdout: "ignore",
+      stderr: "ignore",
+    },
+  );
+  await zip.exited;
 } else {
   console.log(`Scanned ${repos.length} repos, no leaks found.`);
 }

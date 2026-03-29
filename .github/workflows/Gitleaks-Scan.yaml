@@ -40,4 +40,4 @@ jobs:
           to: ${{ secrets.NOTIFY_EMAIL }}
           from: ${{ secrets.SMTP_USERNAME }}
           body: file:///tmp/gitleaks-summary.txt
-          attachments: reports/*.json
+          attachments: /tmp/gitleaks-reports.zip
