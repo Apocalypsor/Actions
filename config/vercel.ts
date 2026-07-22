@@ -14,12 +14,6 @@ export const projects: VercelProject[] = [
     dest: "waline",
   },
   {
-    repo: "https://github.com/5aaee9/Dnsflare",
-    branch: "master",
-    path: "./",
-    dest: "dnsflare",
-  },
-  {
     repo: "https://github.com/CorentinTh/it-tools",
     branch: "main",
     path: "./",
@@ -30,11 +24,5 @@ export const projects: VercelProject[] = [
     branch: "master",
     path: "./",
     dest: "surge",
-  },
-  {
-    repo: "https://github.com/huangxd-/danmu_api",
-    branch: "main",
-    path: "./",
-    dest: "danmu-api",
   },
 ];
