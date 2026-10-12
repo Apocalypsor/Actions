@@ -3,9 +3,12 @@
     "vercel-update": "bun run vercel/index.ts",
     "workflow-clean": "bun run workflow/index.ts",
     "gitleaks-scan": "bun run gitleaks/index.ts",
-    "check": "biome check",
-    "typecheck": "tsc --noEmit",
+    "lint": "biome check",
+    "typecheck": "bun check",
     "prepare": "husky"
+  },
+  "engines": {
+    "bun": ">=1.4.3"
   },
   "dependencies": {
     "@octokit/rest": "^20.1.2",
@@ -19,8 +22,7 @@
     "@types/cli-progress": "^3.11.6",
     "bun-types": "latest",
     "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "typescript": "^6.0.2"
+    "lint-staged": "^16.4.0"
   },
   "lint-staged": {
     "*": [
